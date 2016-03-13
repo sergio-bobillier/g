@@ -23,13 +23,13 @@ class TestParty < Minitest::Unit::TestCase
   # Tests that a party can be created with 1 single character
   def test_party_can_be_created_with_one_character
     party = Party.new(Character.new)
-    assert_equal(party.length, 1, "Should be able to create a party from a single character")
+    assert_equal(1, party.length, "Should be able to create a party from a single character")
   end
 
   # Tests that a party can be created with from a characters array
   def test_party_can_be_created_with_characters_array
     party = Party.new([Character.new, Character.new, Character.new])
-    assert_equal(party.length, 3, "Should be able to create a party from a characters array")
+    assert_equal(3, party.length, "Should be able to create a party from a characters array")
   end
 
   # Test that an aception is thrown if a party is created with a character that
@@ -75,7 +75,7 @@ class TestParty < Minitest::Unit::TestCase
 
     length = party.length
     characters = party.characters
-    assert_equal(characters.length, length, "The returned array length should be the same size as the party size")
+    assert_equal(length, characters.length, "The returned array length should be the same size as the party size")
 
     characters << Character.new
     refute_equal(characters.length, party.length, "Should not be able to add characters to the party directly")
@@ -116,18 +116,18 @@ class TestParty < Minitest::Unit::TestCase
   def test_relationships_created
     character = Character.new
     party = Party.new(character)
-    assert_equal(character.party, party, "Character should be related with it's party")
+    assert_equal(party, character.party, "Character should be related with it's party")
 
     characters = [Character.new, Character.new, Character.new]
     party = Party.new(characters)
 
     characters.each do |chara|
-      assert_equal(chara.party, party, "Characters should be related with their party")
+      assert_equal(party, chara.party, "Characters should be related with their party")
     end
 
     character = Character.new
     party << character
-    assert_equal(character.party, party, "Character must be related with it's party")
+    assert_equal(party, character.party, "Character must be related with it's party")
   end
 
   # Tests that relationships are broken when a character is removed from a party
@@ -175,11 +175,11 @@ class TestParty < Minitest::Unit::TestCase
   def test_leader_when_creating
     character = Character.new
     party = Party.new(character)
-    assert_equal(party.leader, character, "The character that creates the party should be appointed party leader")
+    assert_equal(character, party.leader, "The character that creates the party should be appointed party leader")
 
     character = Character.new
     party = Party.new([character, Character.new, Character.new])
-    assert_equal(party.leader, character, "The first character in the array should be appointed party leader")
+    assert_equal(character, party.leader, "The first character in the array should be appointed party leader")
   end
 
   # Tests the leader= method.
@@ -197,10 +197,10 @@ class TestParty < Minitest::Unit::TestCase
       party.leader = Character.new                # Not a member of the party
     end
 
-    assert_equal(party.leader, character1, "`character1` should've been the party leader here")
+    assert_equal(character1, party.leader, "`character1` should've been the party leader here")
 
     party.leader = character2
-    assert_equal(party.leader, character2, "`character2` should have been promoted to party leader")
+    assert_equal(character2, party.leader, "`character2` should have been promoted to party leader")
   end
 
   # Tests that a character is appointed as party leader when added to an empty
@@ -210,12 +210,12 @@ class TestParty < Minitest::Unit::TestCase
     character1 = Character.new
     party << character1
 
-    assert_equal(party.leader, character1, "The only party member should be appointed as party leader")
+    assert_equal(character1, party.leader, "The only party member should be appointed as party leader")
 
     character2 = Character.new
     party << character2
 
-    assert_equal(party.leader, character1, "`character1` should still be the party leader")
+    assert_equal(character1, party.leader, "`character1` should still be the party leader")
   end
 
   # Tests that a new party leader is appointed if the current party leader is
@@ -228,15 +228,15 @@ class TestParty < Minitest::Unit::TestCase
     party = Party.new([character1, character2])
 
     party.remove(character1)
-    assert_equal(party.leader, character2, "`character2` should have been appointed party leader when `character1` was removed")
+    assert_equal(character2, party.leader, "`character2` should have been appointed party leader when `character1` was removed")
 
     party.remove(character2)
     assert_nil(party.leader, "An empty party should have no leader")
 
     party << character2 << character1
-    assert_equal(party.leader, character2, "`character2` should be the party leader here")
+    assert_equal(character2, party.leader, "`character2` should be the party leader here")
 
     party.remove(character1)
-    assert_equal(party.leader, character2, "`character2` should still be the party leader")
+    assert_equal(character2, party.leader, "`character2` should still be the party leader")
   end
 end
