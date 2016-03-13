@@ -148,4 +148,19 @@ class TestCharacter < Minitest::Unit::TestCase
     assert_equal(Character::MAX_LEVEL, character.level, "Character's level should be #{Character::MAX_LEVEL}")
     assert_equal(character.next_level, character.experience, "Character's experience should be #{character.next_level}")
   end
+
+  # Tests that an instance of the Stats class is created with the character,
+  # that said class is accessible (but not mutable) and the stats mutable.
+  def test_character_stats
+    character = Character.new
+    assert_kind_of(Stats, character.stats, "Character stats should be created with it")
+
+    assert_raises NoMethodError do
+      character.stats = nil
+    end
+
+    original_value = character.stats.wit
+    character.stats.wit = original_value + 5
+    assert_equal(original_value + 5, character.stats.wit, "Character's stats should be mutable")
+  end
 end

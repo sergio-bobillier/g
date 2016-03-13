@@ -1,4 +1,5 @@
 require_relative "exceptions/character_not_in_party_exception"
+require_relative "stats"
 
 # Represents a Character.
 #
@@ -23,7 +24,12 @@ class Character
   # @return [Integer] The experience gained in the current level
   attr_reader :experience
 
+  # @return [Stats] The character's basic stats
+  attr_reader :stats
+
   def initialize(level = 1)
+    @stats = Stats.new
+
     # NOTE: Setting the level should be the last thing in the initializer
     self.level = level
   end
