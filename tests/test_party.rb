@@ -11,12 +11,12 @@ class TestParty < Minitest::Unit::TestCase
   # are used to build it.
   def test_exception_raised_when_invalid_object
     assert_raises ArgumentError do
-      party = Party.new("Hello")        # Not a Character nor an Array
+      Party.new("Hello")        # Not a Character nor an Array
     end
 
     # Not all array elements are characters
     assert_raises ArgumentError do
-      party = Party.new(Character.new, Character.new, "hello")
+      Party.new(Character.new, Character.new, "hello")
     end
   end
 
@@ -36,14 +36,14 @@ class TestParty < Minitest::Unit::TestCase
   # belongs to another party.
   def test_exception_if_character_already_in_party
     character = Character.new
-    party1 = Party.new(character)
+    Party.new(character)
 
     assert_raises CharacterAlreadyInPartyException do
-      party2 = Party.new(character)
+      Party.new(character)
     end
 
     assert_raises CharacterAlreadyInPartyException do
-      party2 = Party.new([Character.new, character, Character.new])
+      Party.new([Character.new, character, Character.new])
     end
   end
 
@@ -53,7 +53,7 @@ class TestParty < Minitest::Unit::TestCase
     character = Character.new
 
     assert_raises CharacterAlreadyInPartyException do
-      party = Party.new([Character.new, character, character, Character.new])
+      Party.new([Character.new, character, character, Character.new])
     end
   end
 
@@ -63,7 +63,7 @@ class TestParty < Minitest::Unit::TestCase
     assert_raises ArgumentError do
       characters = []
       (Party::MAX_SIZE + 1).times { characters << Character.new }
-      party = Party.new(characters)
+      Party.new(characters)
     end
   end
 
@@ -103,7 +103,7 @@ class TestParty < Minitest::Unit::TestCase
 
   def test_exception_if_character_already_in_party_when_added
     character = Character.new
-    party1 = Party.new(character)
+    Party.new(character)
     party2 = Party.new
 
     assert_raises CharacterAlreadyInPartyException do
@@ -121,8 +121,8 @@ class TestParty < Minitest::Unit::TestCase
     characters = [Character.new, Character.new, Character.new]
     party = Party.new(characters)
 
-    characters.each do |character|
-      assert_equal(character.party, party, "Characters should be related with their party")
+    characters.each do |chara|
+      assert_equal(chara.party, party, "Characters should be related with their party")
     end
 
     character = Character.new
