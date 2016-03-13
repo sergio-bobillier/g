@@ -170,4 +170,73 @@ class TestParty < Minitest::Unit::TestCase
     assert(party.include?(character1), "Party should include the character")
     refute(party.include?(character2), "Party should not include the character")
   end
+
+  # Tests that the the party leader is set when the party is created.
+  def test_leader_when_creating
+    character = Character.new
+    party = Party.new(character)
+    assert_equal(party.leader, character, "The character that creates the party should be appointed party leader")
+
+    character = Character.new
+    party = Party.new([character, Character.new, Character.new])
+    assert_equal(party.leader, character, "The first character in the array should be appointed party leader")
+  end
+
+  # Tests the leader= method.
+  def test_leader_change
+    assert_raises ArgumentError do
+      party = Party.new
+      party.leader = "Hello"        # Not a Character instance
+    end
+
+    character1 = Character.new
+    character2 = Character.new
+    party = Party.new([character1, character2])
+
+    assert_raises CharacterNotFoundException do
+      party.leader = Character.new                # Not a member of the party
+    end
+
+    assert_equal(party.leader, character1, "`character1` should've been the party leader here")
+
+    party.leader = character2
+    assert_equal(party.leader, character2, "`character2` should have been promoted to party leader")
+  end
+
+  # Tests that a character is appointed as party leader when added to an empty
+  # party.
+  def test_leader_set_when_adding
+    party = Party.new
+    character1 = Character.new
+    party << character1
+
+    assert_equal(party.leader, character1, "The only party member should be appointed as party leader")
+
+    character2 = Character.new
+    party << character2
+
+    assert_equal(party.leader, character1, "`character1` should still be the party leader")
+  end
+
+  # Tests that a new party leader is appointed if the current party leader is
+  # removed from party, that the party leader is unchanged when another
+  # character is removed and that the leader is set to null when the party
+  # becomes empty.
+  def test_leader_set_on_remove
+    character1 = Character.new
+    character2 = Character.new
+    party = Party.new([character1, character2])
+
+    party.remove(character1)
+    assert_equal(party.leader, character2, "`character2` should have been appointed party leader when `character1` was removed")
+
+    party.remove(character2)
+    assert_nil(party.leader, "An empty party should have no leader")
+
+    party << character2 << character1
+    assert_equal(party.leader, character2, "`character2` should be the party leader here")
+
+    party.remove(character1)
+    assert_equal(party.leader, character2, "`character2` should still be the party leader")
+  end
 end

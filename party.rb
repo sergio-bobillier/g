@@ -9,9 +9,12 @@ class Party
   # Maximum size for party
   MAX_SIZE = 8
 
+  # @return [Character] The current party leader
+  attr_reader :leader
+
   # Creates a new party.
   #
-  # @param characters [Character|Array<Character>] An Character or an array of
+  # @param characters [Character|Array<Character>] A Character or an array of
   #   Characters from wich to build the party.
   def initialize(characters = nil)
     if characters
@@ -38,6 +41,7 @@ class Party
 
         characters.each { |character| character.party = self }
         @characters = characters.clone
+        @leader = characters[0]
       else
         if characters.party
           raise CharacterAlreadyInPartyException.new
@@ -45,6 +49,7 @@ class Party
 
         characters.party = self
         @characters = [characters]
+        @leader = characters
       end
     else
       @characters = []
@@ -59,6 +64,11 @@ class Party
   # @return [Integer] The size of the party.
   def length
     @characters.length
+  end
+
+  # @return [Boolean] True if the party is empty, false otherwise
+  def empty?
+    @characters.empty?
   end
 
   # Adds a character to the party.
@@ -83,7 +93,8 @@ class Party
 
     character.party = self
     @characters << character
-    return nil
+    @leader = character if @characters.length == 1
+    return self
   end
 
   # Removes the given charater from the party.
@@ -95,6 +106,14 @@ class Party
     removed_character = @characters.delete character
     if removed_character
       removed_character.party = nil
+    end
+
+    if removed_character == @leader
+      if @characters.length > 0
+        @leader = @characters[0]
+      else
+        @leader = nil
+      end
     end
 
     return removed_character
@@ -120,5 +139,20 @@ class Party
   #   false otherwise.
   def include?(character)
     @characters.include?(character)
+  end
+
+  # Sets the party leader.
+  #
+  # @param character [Character] The character to be appointed as party leader.
+  def leader=(character)
+    unless character.is_a?(Character)
+      raise ArgumentError.new("`character` must be an instance of Character")
+    end
+
+    unless @characters.include?(character)
+      raise CharacterNotFoundException.new("The character is not a party member")
+    end
+
+    @leader = character
   end
 end
