@@ -1,5 +1,6 @@
 require_relative "exceptions/character_already_in_party_exception"
 require_relative "exceptions/character_not_found_exception"
+require_relative "exceptions/party_has_dispersed_exception"
 require_relative "exceptions/party_full_exception"
 
 # Represents a Characters party.
@@ -14,46 +15,35 @@ class Party
 
   # Creates a new party.
   #
-  # @param characters [Character|Array<Character>] A Character or an array of
-  #   Characters from wich to build the party.
-  def initialize(characters = nil)
-    if characters
-      unless characters.is_a?(Array) || characters.is_a?(Character)
-        raise ArgumentError.new("A party can only be created from an array of characters or an individual character")
-      end
-
-      if characters.is_a?(Array)
-        unless characters.length <= MAX_SIZE
-          raise ArgumentError.new("Party size cannot exceed #{MAX_SIZE} characters")
-        end
-
-        # Check that the array is comprised of characters and that none of them
-        # is already in another party.
-        characters.each do |character|
-          raise ArgumentError.new("All array items must be characters") unless character.is_a?(Character)
-          raise CharacterAlreadyInPartyException.new if character.party
-        end
-
-        # Checks that no character is repeated in the array
-        unless characters.length == characters.uniq.length
-          raise CharacterAlreadyInPartyException.new
-        end
-
-        characters.each { |character| character.party = self }
-        @characters = characters.clone
-        @leader = characters[0]
-      else
-        if characters.party
-          raise CharacterAlreadyInPartyException.new
-        end
-
-        characters.party = self
-        @characters = [characters]
-        @leader = characters
-      end
-    else
-      @characters = []
+  # @param characters [Array<Character>] An array of Characters.
+  def initialize(characters)
+    unless characters.is_a?(Array)
+      raise ArgumentError.new("A party can only be created from an array of characters")
     end
+
+    unless characters.length >= 2
+      raise ArgumentError.new("Parties should be compraised of at least two characters")
+    end
+
+    unless characters.length <= MAX_SIZE
+      raise ArgumentError.new("Party size cannot exceed #{MAX_SIZE} characters")
+    end
+
+    # Check that the array is comprised of characters and that none of them
+    # is already in another party.
+    characters.each do |character|
+      raise ArgumentError.new("All array items must be characters") unless character.is_a?(Character)
+      raise CharacterAlreadyInPartyException.new if character.party
+    end
+
+    # Checks that no character is repeated in the array
+    unless characters.length == characters.uniq.length
+      raise CharacterAlreadyInPartyException.new
+    end
+
+    characters.each { |character| character.party = self }
+    @characters = characters.clone
+    @leader = characters[0]
   end
 
   # @return [Array] A copy of the party's caracters array.
@@ -66,24 +56,22 @@ class Party
     @characters.length
   end
 
-  # @return [Boolean] True if the party is empty, false otherwise
-  def empty?
-    @characters.empty?
-  end
-
   # Adds a character to the party.
   #
   # @param character [Character] The character
   # @raise [ArgumentError] If the given object is not a Character.
+  # @raise [PartyHasDispersedException] If the party has dispersed.
   # @raise [PartyFullException] If the party is full.
   # @raise [CharacterAlreadyInPartyException] If the character is already in a
   #   party.
   def <<(character)
+    raise PartyHasDispersedException.new if @dispersed
+
     unless character.is_a?(Character)
       raise ArgumentError.new("Only characters can be added to a party")
     end
 
-    unless length < MAX_SIZE
+    unless @characters.length < MAX_SIZE
       raise PartyFullException.new
     end
 
@@ -93,7 +81,6 @@ class Party
 
     character.party = self
     @characters << character
-    @leader = character if @characters.length == 1
     return self
   end
 
@@ -108,19 +95,20 @@ class Party
       removed_character.party = nil
     end
 
-    if removed_character == @leader
-      if @characters.length > 0
-        @leader = @characters[0]
-      else
-        @leader = nil
-      end
+    if @characters.length == 1
+      @characters[0].leave_party
+      @dispersed = true;
+    end
+
+    if removed_character == @leader && @characters.any?
+      @leader = @characters[0]
     end
 
     return removed_character
   end
 
   # Removes the given character from the party. If the character is not in the
-  # party the function will throw a CharacterNotFoundException.
+  # party the function will raise a CharacterNotFoundException.
   #
   # @param character [Character] The character to be removed.
   # @return [Character] The removed character
@@ -128,10 +116,7 @@ class Party
   #   party.
   def remove!(character)
     removed_character = remove(character)
-    unless removed_character
-      raise CharacterNotFoundException.new
-    end
-
+    raise CharacterNotFoundException.new unless removed_character
     return removed_character
   end
 
@@ -154,5 +139,10 @@ class Party
     end
 
     @leader = character
+  end
+
+  # @return [Boolean] True if the party has dispersed, false otherwise
+  def dispersed?
+    return @dispersed ? true : false
   end
 end

@@ -11,36 +11,34 @@ class TestParty < Minitest::Unit::TestCase
   # are used to build it.
   def test_exception_raised_when_invalid_object
     assert_raises ArgumentError do
-      Party.new("Hello")        # Not a Character nor an Array
+      Party.new("Hello")        # Not a Characters array
     end
 
     # Not all array elements are characters
     assert_raises ArgumentError do
-      Party.new(Character.new, Character.new, "hello")
+      Party.new([Character.new, Character.new, "hello"])
     end
   end
 
-  # Tests that a party can be created with 1 single character
-  def test_party_can_be_created_with_one_character
-    party = Party.new(Character.new)
-    assert_equal(1, party.length, "Should be able to create a party from a single character")
+  # Tests than an exception is raised if the party is created with an array of
+  # a single character.
+  def test_exception_raised_if_array_of_one_element
+    assert_raises ArgumentError do
+      Party.new([Character.new])
+    end
   end
 
-  # Tests that a party can be created with from a characters array
+  # Tests that a party can be created from a characters array
   def test_party_can_be_created_with_characters_array
     party = Party.new([Character.new, Character.new, Character.new])
     assert_equal(3, party.length, "Should be able to create a party from a characters array")
   end
 
-  # Test that an aception is thrown if a party is created with a character that
+  # Test that an exception is raised if a party is created with a character that
   # belongs to another party.
   def test_exception_if_character_already_in_party
     character = Character.new
-    Party.new(character)
-
-    assert_raises CharacterAlreadyInPartyException do
-      Party.new(character)
-    end
+    Party.new([character, Character.new])
 
     assert_raises CharacterAlreadyInPartyException do
       Party.new([Character.new, character, Character.new])
@@ -84,13 +82,15 @@ class TestParty < Minitest::Unit::TestCase
   # Tests that an exception is raised when a non character object is added to a
   # party.
   def test_exception_if_invalid_object_added
-    party = Party.new
+    party = Party.new([Character.new, Character.new])
 
     assert_raises ArgumentError do
       party << "Hello"
     end
   end
 
+  # Tests than an exception is raised when an attempt is made to add a character
+  # to a full party.
   def test_exception_if_party_full
     characters = []
     (Party::MAX_SIZE).times { characters << Character.new }
@@ -101,10 +101,12 @@ class TestParty < Minitest::Unit::TestCase
     end
   end
 
+  # Tests than an exception is raised if an attempt is made to add a character
+  # that is already in a party to another party.
   def test_exception_if_character_already_in_party_when_added
     character = Character.new
-    Party.new(character)
-    party2 = Party.new
+    Party.new([character, Character.new])
+    party2 = Party.new([Character.new, Character.new])
 
     assert_raises CharacterAlreadyInPartyException do
       party2 << character
@@ -114,10 +116,6 @@ class TestParty < Minitest::Unit::TestCase
   # Tests that relations are created between the characters and theirs parties
   # when parties are created or characters are added to the parties later.
   def test_relationships_created
-    character = Character.new
-    party = Party.new(character)
-    assert_equal(party, character.party, "Character should be related with it's party")
-
     characters = [Character.new, Character.new, Character.new]
     party = Party.new(characters)
 
@@ -136,7 +134,8 @@ class TestParty < Minitest::Unit::TestCase
     character1 = Character.new
     character2 = Character.new
     character3 = Character.new
-    party = Party.new([character1, character2, character3])
+    character4 = Character.new
+    party = Party.new([character1, character2, character3, character4])
 
     party.remove(character1)
     assert_nil(character1.party, "Relationships should be broken when characters are removed from parties")
@@ -152,7 +151,7 @@ class TestParty < Minitest::Unit::TestCase
   # is not member of the party is removed and that the remove! (bang) method
   # does
   def test_remove_without_and_with_exception
-    party = Party.new
+    party = Party.new([Character.new, Character.new])
     character = Character.new
 
     party.remove(character)
@@ -166,17 +165,13 @@ class TestParty < Minitest::Unit::TestCase
   def test_include
     character1 = Character.new
     character2 = Character.new
-    party = Party.new(character1)
+    party = Party.new([character1, Character.new])
     assert(party.include?(character1), "Party should include the character")
     refute(party.include?(character2), "Party should not include the character")
   end
 
   # Tests that the the party leader is set when the party is created.
   def test_leader_when_creating
-    character = Character.new
-    party = Party.new(character)
-    assert_equal(character, party.leader, "The character that creates the party should be appointed party leader")
-
     character = Character.new
     party = Party.new([character, Character.new, Character.new])
     assert_equal(character, party.leader, "The first character in the array should be appointed party leader")
@@ -185,7 +180,7 @@ class TestParty < Minitest::Unit::TestCase
   # Tests the leader= method.
   def test_leader_change
     assert_raises ArgumentError do
-      party = Party.new
+      party = Party.new([Character.new, Character.new])
       party.leader = "Hello"        # Not a Character instance
     end
 
@@ -203,40 +198,56 @@ class TestParty < Minitest::Unit::TestCase
     assert_equal(character2, party.leader, "`character2` should have been promoted to party leader")
   end
 
-  # Tests that a character is appointed as party leader when added to an empty
-  # party.
-  def test_leader_set_when_adding
-    party = Party.new
-    character1 = Character.new
-    party << character1
-
-    assert_equal(character1, party.leader, "The only party member should be appointed as party leader")
-
-    character2 = Character.new
-    party << character2
-
-    assert_equal(character1, party.leader, "`character1` should still be the party leader")
-  end
-
   # Tests that a new party leader is appointed if the current party leader is
-  # removed from party, that the party leader is unchanged when another
-  # character is removed and that the leader is set to null when the party
-  # becomes empty.
+  # removed from party and that the party leader is unchanged when another
+  # character is removed.
   def test_leader_set_on_remove
     character1 = Character.new
     character2 = Character.new
-    party = Party.new([character1, character2])
+    character3 = Character.new
+    party = Party.new([character1, character2, character3])
 
     party.remove(character1)
     assert_equal(character2, party.leader, "`character2` should have been appointed party leader when `character1` was removed")
 
-    party.remove(character2)
-    assert_nil(party.leader, "An empty party should have no leader")
-
-    party << character2 << character1
+    party << character1
     assert_equal(character2, party.leader, "`character2` should be the party leader here")
 
     party.remove(character1)
     assert_equal(character2, party.leader, "`character2` should still be the party leader")
+  end
+
+  # Tests that the party disperses if all but one character leaves
+  def test_party_disperses_if_all_removed
+    character1 = Character.new
+    character2 = Character.new
+
+    party = Party.new([character1, character2])
+    party.remove(character1)
+
+    assert_equal(true, party.dispersed?, "Party should have been dispersed")
+    assert_nil(character1.party, "`character1` should not be in party")
+    assert_nil(character2.party, "`character2` should not be in party")
+
+    party = Party.new([character1, character2])
+    character1.leave_party
+
+    assert_equal(true, party.dispersed?, "Party should have been dispersed")
+    assert_nil(character1.party, "`character1` should not be in party")
+    assert_nil(character2.party, "`character2` should not be in party")
+  end
+
+  # Tests that an exception is raised when an attempt is made to add a character
+  # to a dispersed party.
+  def test_exception_when_add_to_dispersed_party
+    character1 = Character.new
+    character2 = Character.new
+
+    party = Party.new([character1, character2])
+    party.remove(character1)
+
+    assert_raises PartyHasDispersedException do
+      party << character1
+    end
   end
 end

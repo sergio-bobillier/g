@@ -17,7 +17,7 @@ class TestCharacter < Minitest::Unit::TestCase
   # calling leave_party
   def test_not_exception_if_leave_after_joining
     character = Character.new
-    party = Party.new(character)
+    party = Party.new([character, Character.new, Character.new])
     character.leave_party
 
     party << character
@@ -28,8 +28,8 @@ class TestCharacter < Minitest::Unit::TestCase
   # it does not belongs to.
   def test_exception_on_irregular_situation
     assert_raises CharacterNotFoundException do
+      party = Party.new([Character.new, Character.new])
       character = Character.new
-      party = Party.new
       character.party = party
       character.leave_party
     end
