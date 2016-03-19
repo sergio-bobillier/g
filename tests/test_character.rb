@@ -211,5 +211,10 @@ class TestCharacter < Minitest::Unit::TestCase
     attributes = Attributes.new(character.stats, character.level)
     assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
     assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+
+    character.experience += character.next_level * 5
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
+    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
   end
 end

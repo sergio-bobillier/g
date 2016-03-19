@@ -62,8 +62,9 @@ class Character
 
     @next_level = experience
 
-    # Recalculate the character attributes for this level
-    @attributes.calculate_attributes(@stats, @level, true)
+    unless @dont_recalculate
+      recalculate_attributes(true)
+    end
   end
 
   # Sets the character's experience in the current level. If the experience set
@@ -82,10 +83,16 @@ class Character
       if experience < @next_level
         @experience = experience
       else
+
+        @dont_recalculate = true
+
         while experience >= @next_level && @level < MAX_LEVEL do
           experience -= @next_level
           self.level += 1
         end
+
+        recalculate_attributes(true)
+        @dont_recalculate = false
 
         if experience > @next_level
           @experience = @next_level
@@ -101,6 +108,8 @@ class Character
 
       experience = @experience + experience.abs
 
+      @dont_recalculate = true
+
       while experience >= @experience
         experience -= @experience
         self.level -= 1
@@ -108,6 +117,9 @@ class Character
 
         break if @level == 1      # Don't allow the charater to go below level 1
       end
+
+      recalculate_attributes(true)
+      @dont_recalculate = false
 
       if experience > @experience
         @experience = 0
@@ -129,5 +141,16 @@ class Character
     end
 
     party.remove!(self)
+  end
+
+  private
+
+  # Recalculates the character attributes with the current level and ststs.
+  #
+  # @param reset_transient_attributes [Boolean] If true transient attributes
+  #   like health and mana will be reset to their maximum.
+  def recalculate_attributes(reset_transient_attributes)
+    # Recalculate the character attributes for this level
+    @attributes.calculate_attributes(@stats, @level, reset_transient_attributes)
   end
 end
