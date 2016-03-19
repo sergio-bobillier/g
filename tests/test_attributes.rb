@@ -121,4 +121,24 @@ class TestAttributes < Minitest::Unit::TestCase
     assert_equal(attributes.total_health, attributes.health, "health should be equal to total_health. Transient attributes should be adjusted when their total decreases.")
     assert_equal(attributes.total_mana, attributes.mana, "mana should be equal to total_mana. Transient attributes should be adjusted when their total decreases.")
   end
+
+  # Tests that the attribute calculations work as expected in various levels.
+  def test_attributes_and_levels
+    stats = Stats.new
+    attributes = Attributes.new(stats)
+    assert_equal(179, attributes.total_mana, "total_mana should be equal to 179 at level 1")
+    assert_equal(0.02, attributes.magic_critical_rate, "magic_critial_rate should be equal to 0.02 at level 1")
+
+    attributes.calculate_attributes(stats, 2)
+    assert_equal(208, attributes.total_mana, "total_mana should be equal to 208 at level 2")
+    assert_equal(0.02, attributes.magic_critical_rate, "magic_critial_rate should be equal to 0.02 at level 2")
+
+    attributes.calculate_attributes(stats, 5)
+    assert_equal(295, attributes.total_mana, "total_mana should be equal to 295 at level 5")
+    assert_equal(0.03, attributes.magic_critical_rate, "magic_critial_rate should be equal to 0.03 at level 5")
+
+    attributes.calculate_attributes(stats, 10)
+    assert_equal(440, attributes.total_mana, "total_mana should be equal to 440 at level 10")
+    assert_equal(0.04, attributes.magic_critical_rate, "magic_critial_rate should be equal to 0.04 at level 10")
+  end
 end
