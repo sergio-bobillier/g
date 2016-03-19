@@ -1,3 +1,4 @@
+require_relative "attributes"
 require_relative "exceptions/character_not_in_party_exception"
 require_relative "stats"
 
@@ -27,8 +28,12 @@ class Character
   # @return [Stats] The character's basic stats
   attr_reader :stats
 
+  # @return [Attributes] The character's attributes
+  attr_reader :attributes
+
   def initialize(level = 1)
     @stats = Stats.new
+    @attributes = Attributes.new
 
     # NOTE: Setting the level should be the last thing in the initializer
     self.level = level
@@ -51,11 +56,14 @@ class Character
 
     experience = BASE_EXP
 
-    if level >= 2
-      (level-1).times { experience = (experience * 1.5).floor }
+    if @level >= 2
+      (@level-1).times { experience = (experience * 1.5).floor }
     end
 
     @next_level = experience
+
+    # Recalculate the character attributes for this level
+    @attributes.calculate_attributes(@stats, @level, true)
   end
 
   # Sets the character's experience in the current level. If the experience set

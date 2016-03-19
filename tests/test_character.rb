@@ -150,7 +150,8 @@ class TestCharacter < Minitest::Unit::TestCase
   end
 
   # Tests that an instance of the Stats class is created with the character,
-  # that said class is accessible (but not mutable) and the stats mutable.
+  # that said class is accessible (but not mutable) and that the stats
+  # themselves mutable.
   def test_character_stats
     character = Character.new
     assert_kind_of(Stats, character.stats, "Character stats should be created with it")
@@ -162,5 +163,53 @@ class TestCharacter < Minitest::Unit::TestCase
     original_value = character.stats.wit
     character.stats.wit = original_value + 5
     assert_equal(original_value + 5, character.stats.wit, "Character's stats should be mutable")
+  end
+
+  # Tests that an instance of the Attributes class is created with the caracter,
+  # that said class is accessible (but not mutable) and that the attributes
+  # themselves are mutable.
+  def test_character_attributes
+    character = Character.new
+    assert_kind_of(Attributes, character.attributes, "Character attributes should be created with it")
+
+    assert_raises NoMethodError do
+      character.attributes = nil
+    end
+
+    original_value = character.attributes.casting_speed
+    character.attributes.casting_speed = original_value + 100
+    assert_equal(original_value + 100, character.attributes.casting_speed, "Character attributes should be mutable")
+  end
+
+  # Tests that character attributes are calculated when the character is
+  # created.
+  def test_attributes_calculated
+    character = Character.new
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.critical_rate, character.attributes.critical_rate, "Character attributes should be calculated when the character is created")
+  end
+
+  # Tests that the character attributes are re-calculated when the character's
+  # level changes directly or by means of experience gain.
+  def test_attributes_on_level_change
+    character = Character.new
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be calculated when the character is created")
+    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+
+    character.level = 6
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character level is set")
+    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+
+    character.level += 1
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character level is mutated")
+    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+
+    character.experience += character.next_level * 2
+    attributes = Attributes.new(character.stats, character.level)
+    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
+    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
   end
 end
