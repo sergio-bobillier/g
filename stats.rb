@@ -1,3 +1,5 @@
+require_relative "hash_properties"
+
 # Models the character's basic stats.
 #
 # - con - Constitution: Influences physical defense, resistance to physical
@@ -14,6 +16,8 @@
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class Stats
+  include HashProperties
+
   # The maximum value that character stats (str, con, etc) can get.
   MAX_STATS = 50
 
@@ -47,17 +51,9 @@ class Stats
   # @param method [Symbol] The called method name.
   # @param args [Array] The method parameters.
   def method_missing(method, *args)
-    set_stat = false
-    method_name = method.to_s
-    if method_name.end_with?("=")
-      method = method_name[0..-2].to_sym
-      set_stat = true
+    hash_properties(@stats, method, args) do |stat, value|
+      set_stat(stat, value)
     end
-
-    super unless @stats.has_key?(method)
-
-    return set_stat(method, args[0]) if set_stat
-    return @stats[method]
   end
 
   # Adds the stat values of the given object to the stat values of the receiver.
