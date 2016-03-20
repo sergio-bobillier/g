@@ -80,4 +80,28 @@ class TestStats < Minitest::Unit::TestCase
     assert_equal(25, stats.int, "Intelligence should be 25")
     assert_equal(30, stats.str, "Strength should be 30")
   end
+
+  # Tests that listeners get called when a stat changes, that nothing is raised
+  # even is something besides a Proc is added to the listeners array and that
+  # listeners are not called if the stat value doesn't change.
+  def test_listeners
+      called = false
+
+      stats = Stats.new
+      stats.change_listeners << lambda { |stat, currentValue, newValue| called = true }
+      stats.str += 2
+
+      assert_equal(true, called, "Listener should have been called")
+
+      stats = Stats.new
+      stats.change_listeners << "hello"
+      stats.men += 10
+
+      stats = Stats.new
+      stats.change_listeners << lambda { |stat, currentValue, newValue|
+        raise Exception.new("Listeners should not be called if the value doesn't change")
+      }
+
+      stats.wit = 20
+  end
 end

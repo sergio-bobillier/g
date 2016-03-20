@@ -24,6 +24,15 @@ class Stats
   # The default value for all stats
   DEFAULT_VALUE = 20
 
+  # An array of listeners that will be executed when a stat changes. The
+  # listeners should respond to the call method. When listeners are called they
+  # receive three parameters: the stat being changed, the current value and the
+  # new value. No listeners will be called if no change occurs (current value
+  # equals new value)
+  #
+  # @return [Array<#call>] The array of listeners.
+  attr_reader :change_listeners
+
   # Class constructor. Initializes all stats to a default value
   def initialize(stats = nil)
     raise ArgumentError.new("`stats` should be Hash") unless stats.nil? || stats.is_a?(Hash)
@@ -36,6 +45,8 @@ class Stats
       :men => DEFAULT_VALUE,
       :wit => DEFAULT_VALUE
     }
+
+    @change_listeners = []
 
     if stats
       stats.each do |stat, value|
@@ -82,6 +93,14 @@ class Stats
     raise ArgumentError.new("Integer expected but #{value.class} received") unless value.is_a?(Integer)
     value = MAX_STATS if value > MAX_STATS
     value = 0 if value < 0
+
+    unless @stats[stat] == value
+      @change_listeners.each do |listener|
+        next unless listener.respond_to?(:call)
+        listener.call(:stat, @stats[:stat], value)
+      end
+    end
+
     @stats[stat] = value
   end
 end
