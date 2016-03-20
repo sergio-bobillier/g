@@ -217,4 +217,13 @@ class TestCharacter < Minitest::Unit::TestCase
     assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
     assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
   end
+
+  # Tests that attributes are recalculated when stats change.
+  def test_attribute_recalculation_on_stats_change
+    character = Character.new
+    currentValue = character.attributes.casting_speed
+    character.stats.wit += 4
+
+    refute_equal(currentValue, character.attributes.casting_speed, "Attributes should be recalculated when stats change")
+  end
 end

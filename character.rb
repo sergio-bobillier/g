@@ -33,6 +33,12 @@ class Character
 
   def initialize(level = 1)
     @stats = Stats.new
+
+    # Attributes needs to be recalculated when stats change.
+    @stats.change_listeners << lambda { |stat, currentValue, newValue|
+      recalculate_attributes
+    }
+
     @attributes = Attributes.new
 
     # NOTE: Setting the level should be the last thing in the initializer
@@ -149,7 +155,7 @@ class Character
   #
   # @param reset_transient_attributes [Boolean] If true transient attributes
   #   like health and mana will be reset to their maximum.
-  def recalculate_attributes(reset_transient_attributes)
+  def recalculate_attributes(reset_transient_attributes = false)
     # Recalculate the character attributes for this level
     @attributes.calculate_attributes(@stats, @level, reset_transient_attributes)
   end
