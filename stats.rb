@@ -94,13 +94,16 @@ class Stats
     value = MAX_STATS if value > MAX_STATS
     value = 0 if value < 0
 
-    unless @stats[stat] == value
+    oldValue = @stats[stat]
+    @stats[stat] = value
+
+    unless oldValue == value
       @change_listeners.each do |listener|
         next unless listener.respond_to?(:call)
         listener.call(:stat, @stats[:stat], value)
       end
     end
 
-    @stats[stat] = value
+    return value
   end
 end
