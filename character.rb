@@ -1,5 +1,6 @@
 require_relative "attributes"
 require_relative "exceptions/character_not_in_party_exception"
+require_relative "race"
 require_relative "stats"
 
 # Represents a Character.
@@ -31,8 +32,16 @@ class Character
   # @return [Attributes] The character's attributes
   attr_reader :attributes
 
-  def initialize(level = 1)
+  # @return [Race] The character's race.
+  attr_reader :race
+
+  def initialize(race, level = 1)
+    raise ArgumentError.new("race should be an instance of `Race`") unless race.is_a?(Race)
+
+    @race = race
+
     @stats = Stats.new
+    @stats << @race.stats
 
     # Attributes needs to be recalculated when stats change.
     @stats.change_listeners << lambda { |stat, currentValue, newValue|
