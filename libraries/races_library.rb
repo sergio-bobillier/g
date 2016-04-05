@@ -7,7 +7,7 @@ require_relative "../race"
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 module RacesLibrary
   HUMAN = Race.new(Stats.new(
-    {:con => 3, :str => 3, :str => 3, :int => 3, :men => 3, :wit => 3}), [:light, :dark])
+    {:con => 3, :str => 3, :dex => 3, :int => 3, :men => 3, :wit => 3}), [:light, :dark])
 
   ELF = Race.new(Stats.new(
     {:con => 2, :str => 2, :dex => 4, :int => 4, :men => 4, :wit => 5}), :water)
