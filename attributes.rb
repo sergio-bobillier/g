@@ -1,4 +1,5 @@
 require_relative "hash_properties"
+require_relative "stats"
 
 # Models the attributes and stats of characters.
 #
