@@ -21,6 +21,7 @@ class Race
   def initialize(stats, element = nil)
     raise ArgumentError.new("`stats` should be an instance of Stats") unless stats.is_a?(Stats)
     self.element = element if element
+    @stats = stats
   end
 
   # Sets the race's element (or elements). A race's element determines what
