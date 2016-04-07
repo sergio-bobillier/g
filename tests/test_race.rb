@@ -7,25 +7,16 @@ require_relative "../race"
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class TestRace < Minitest::Unit::TestCase
 
-  # Tests that the initializer method doesn't allow the creation of an invalid
-  # race. It also tests that the stats and element attributes are set correctly
-  # in the newly created race.
+  # Tests that the initializer method can create a race without en element,
+  # that it can create a race with an element and a rece with two (or more)
+  # elements.
+  #
+  # NOTE: The invalid element tests are done in the test_element_setter
+  # test case since is in the element setter where the validation occurrs.
+  #
+  # @see test_element_setter
   def test_initializer
-    assert_raises ArgumentError do
-      Race.new                           # No stats argument
-    end
-
-    assert_raises ArgumentError do
-      Race.new("hello")                  # Invalid stats argument
-    end
-
-    race = Race.new(Stats.new({:con => 10, :str => 8, :dex => 6, :int => 4, :men => 2, :wit => 0}))
-    assert_equal(10, race.stats.con, "The new race's con should be 10")
-    assert_equal(8, race.stats.str, "The new race's str should be 8")
-    assert_equal(6, race.stats.dex, "The new race's dex should be 6")
-    assert_equal(4, race.stats.int, "The new race's int should be 4")
-    assert_equal(2, race.stats.men, "The new race's men should be 2")
-    assert_equal(0, race.stats.wit, "The new race's wit should be 0")
+    race = Race.new(Stats.new)
     assert_nil(race.element, "The new race should have no element")
 
     race = Race.new(Stats.new, :water)
