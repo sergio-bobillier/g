@@ -3,16 +3,16 @@ require_relative "hash_properties"
 # Models the character's basic stats.
 #
 # - con - Constitution: Influences physical defense, resistance to physical
-#         debuffs and health
+#   debuffs and health
 # - str - Strength: Influences physical attack, physical debuff landing rate
-#         and critical damage
+#   and critical damage
 # - dex - Dexterity: Influences crital rate, evasion, accuracy and speed
 # - int - Intelligence: Influences magic power, magical critical damage and
-#         magical debuff landing rate.
+#   magical debuff landing rate.
 # - men - Mental Strength: Influences magical defense, resistance to magic
-#         debuffs, and mana
+#   debuffs, and mana
 # - wit - Wisdom: Influences magical critical rate, magical accuracy, magical
-#         evasion and casting speed.
+#   evasion and casting speed.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class Stats
@@ -70,7 +70,7 @@ class Stats
   # Adds the stat values of the given object to the stat values of the receiver.
   #
   # @param stats [Stats] The stat object whose values should be added.
-  # @param [Stats] The receiver object (so multiple Stats object can be added)
+  # @return [Stats] The receiver object (so multiple Stats object can be added)
   def <<(stats)
     raise ArgumentError.new("Stats expected but got #{stats.class}") unless stats.is_a?(Stats)
 
