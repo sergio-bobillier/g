@@ -81,6 +81,24 @@ class Stats
     return self
   end
 
+  # Returns a new instance of Stats whose values are the sum of the receiver
+  # values and the stats values.
+  #
+  # @param stats [Stats] The stats object whose values should be added.
+  # @return [Stats] A new instance of Stats.
+  def +(stats)
+    raise ArgumentError.new("Stats expected but got #{stats.class} instead") unless stats.is_a?(Stats)
+
+    new_stats = Stats.new
+
+    @stats.each do |stat, value|
+      setter = "#{stat}=".to_sym
+      new_stats.send(setter, value + stats.send(stat))
+    end
+
+    return new_stats
+  end
+
   private
 
   # Sets a stat's value. If the value is less than zero then the stat will be

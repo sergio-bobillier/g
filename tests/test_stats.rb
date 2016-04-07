@@ -81,6 +81,32 @@ class TestStats < Minitest::Unit::TestCase
     assert_equal(30, stats.str, "Strength should be 30")
   end
 
+  # Tests that the "+" method in the stats class create a new instance of Stats
+  # whose values are the sum of the values of the operands.
+  def test_addition
+    s1 = {:con => 1, :str => 2, :dex => 3, :int => 5, :men => 7, :wit => 11}
+    s2 = {:con => 1, :str => 1, :dex => 2, :int => 3, :men => 5, :wit => 8}
+
+    stats1 = Stats.new(s1)
+    stats2 = Stats.new(s2)
+    stats3 = stats1 + stats2
+    stats4 = stats1 + stats1
+
+    refute_equal(stats1, stats3, "The result should be a new instance of Stats")
+    refute_equal(stats2, stats3, "The result should be a new instance of Stats")
+
+    s1.each do |stat, value|
+      assert_equal(s1[stat], stats1.send(stat), "Original stats should not be modified")
+      assert_equal(s2[stat], stats2.send(stat), "Original stats should not be modified")
+
+      expected = s1[stat] + s2[stat]
+      assert_equal(expected, stats3.send(stat), "The sum for #{stat} should give #{expected}")
+
+      expected = s1[stat] * 2
+      assert_equal(expected, stats4.send(stat), "The sum for #{stat} when added to itself should be #{expected}")
+    end
+  end
+
   # Tests the following:
   #
   # * That listeners get called when a stat changes.
