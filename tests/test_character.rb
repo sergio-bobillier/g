@@ -1,5 +1,6 @@
 require "minitest/autorun"
 require_relative "../character"
+require_relative "../libraries/jobs_library"
 require_relative "../libraries/races_library"
 require_relative "../party"
 
@@ -273,5 +274,79 @@ class TestCharacter < Minitest::Unit::TestCase
     assert_equal(751, character.attributes.magic_power, "Character's magic power should be 751")
     assert_equal(655, character.attributes.magic_defense, "Character's magic defense should be 655")
     assert_equal(0.05, character.attributes.magic_critical_rate, "Character's magic crtical rate should be 0.05")
+  end
+
+  # Performs tests for the character's job setting and changing
+  def test_jobs
+    # Checks that an exception is raised if an attempt is made to create a
+    # character with something besides a job.
+    assert_raises ArgumentError do
+      Character.new(BLANK_RACE, 1, "hello")
+    end
+
+    # Checks that a character can be created without a job and that the job
+    # property returns nil in such case.
+    character = Character.new(BLANK_RACE)
+    assert_nil(character.job, "`job` should be nil if the character is created without a job")
+
+    # Checks that the character's attributes are not affected if no job is
+    # supplied on creation.
+    message = "If no race is given attributes should not be affected"
+    assert_equal(261, character.attributes.total_health, message)
+    assert_equal(1.02, character.attributes.critical_damage, message)
+    assert_equal(0.04, character.attributes.critical_rate, message)
+    assert_equal(173, character.attributes.magic_power, message)
+    assert_equal(157, character.attributes.magic_defense, message)
+    assert_equal(0.12, character.attributes.magic_evasion, message)
+
+    # Checks that a character can be created with a job and that the job
+    # property returns the correct job.
+    character = Character.new(BLANK_RACE, 1, JobsLibrary::PRIEST)
+    assert_equal(JobsLibrary::PRIEST, character.job, "Should be able to create a character with a job")
+
+    # Checks that the character's attributes are affected accordingly when a job
+    # is set.
+    message = "Attributes should be affected when a job is set."
+    assert_equal(261, character.attributes.total_health, message)
+    assert_equal(1.02, character.attributes.critical_damage, message)
+    assert_equal(0.04, character.attributes.critical_rate, message)
+    assert_equal(173, character.attributes.magic_power, message)
+    assert_equal(180, character.attributes.magic_defense, message)
+    assert_equal(0.13, character.attributes.magic_evasion, message)
+
+    # Checks that an exception is raised if something besides a Job is used when
+    # setting the character's job.
+    assert_raises ArgumentError do
+      character.job = "hello"
+    end
+
+    # Checks that the character's job can be changed after creation.
+    character.job = JobsLibrary::KNIGHT
+    assert_equal(JobsLibrary::KNIGHT, character.job, "Should be able to change the job after creation")
+
+    # Checks that attributes are re-calculated when a new job is set
+    message = "Attributes should be recalculated when a job changes"
+    assert_equal(352, character.attributes.total_health, message)
+    assert_equal(1.02, character.attributes.critical_damage, message)
+    assert_equal(0.04, character.attributes.critical_rate, message)
+    assert_equal(173, character.attributes.magic_power, message)
+    assert_equal(172, character.attributes.magic_defense, message)
+    assert_equal(0.12, character.attributes.magic_evasion, message)
+
+    # Checks that transient attributes are not reset when a job changes
+    assert_equal(261, character.attributes.health, "Transient attributes should not be reset on job change")
+
+    # Checks that the character's job can be removed after creation.
+    character.job = nil
+    assert_nil(character.job, "Should be able to remove the job after character creation")
+
+    # Checks that attributes are re-calculated when a job is removed.
+    message = "Attributes should be recalculated when a job is removed"
+    assert_equal(261, character.attributes.total_health, message)
+    assert_equal(1.02, character.attributes.critical_damage, message)
+    assert_equal(0.04, character.attributes.critical_rate, message)
+    assert_equal(173, character.attributes.magic_power, message)
+    assert_equal(157, character.attributes.magic_defense, message)
+    assert_equal(0.12, character.attributes.magic_evasion, message)
   end
 end

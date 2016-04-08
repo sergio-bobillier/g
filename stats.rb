@@ -88,15 +88,12 @@ class Stats
   # @return [Stats] A new instance of Stats.
   def +(stats)
     raise ArgumentError.new("Stats expected but got #{stats.class} instead") unless stats.is_a?(Stats)
+    derive(stats)
+  end
 
-    new_stats = Stats.new
-
-    @stats.each do |stat, value|
-      setter = "#{stat}=".to_sym
-      new_stats.send(setter, value + stats.send(stat))
-    end
-
-    return new_stats
+  # @return [Stats] A clone of the receiver object.
+  def clone
+    derive
   end
 
   private
@@ -123,5 +120,23 @@ class Stats
     end
 
     return value
+  end
+
+  # Creates a new Stats object from the receiver and optionally adds the values
+  # of the given `Stats` object to the newly created object.
+  #
+  # @param stats [Stats] An optional Stats object whose values should be added
+  #   to the newly created object.
+  # @return [Stats] A new `Stats` object derived from the receiver.
+  def derive(stats = nil)
+    new_stats = Stats.new
+
+    @stats.each do |stat, value|
+      setter = "#{stat}=".to_sym
+      addition = (stats ? stats.send(stat) : 0)
+      new_stats.send(setter, value + addition)
+    end
+
+    return new_stats
   end
 end

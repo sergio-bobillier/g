@@ -1,5 +1,6 @@
 require_relative "attributes"
 require_relative "exceptions/character_not_in_party_exception"
+require_relative "job"
 require_relative "race"
 require_relative "stats"
 
@@ -35,13 +36,26 @@ class Character
   # @return [Race] The character's race.
   attr_reader :race
 
-  def initialize(race, level = 1)
+  # @return [Job] The character's current job.
+  attr_reader :job
+
+  # Creates a new character with the supplied race, level and job
+  #
+  # @param race [Race] The character's race.
+  # @param level [Integer] The character's level.
+  # @param job [Job] The character's job.
+  # @return [Character] The new Character instance.
+  # @raise [ArgumentError] If `race` is not an instance of `Race`, `level` is
+  #   not an Integer or is outside the valid range or `job` is not an instance
+  #   of `Job`
+  def initialize(race, level = 1, job = nil)
     raise ArgumentError.new("race should be an instance of `Race`") unless race.is_a?(Race)
 
     @race = race
 
-    @stats = Stats.new
-    @stats << @race.stats
+    @base_stats = Stats.new
+    @base_stats << @race.stats
+    self.job = job
 
     # Attributes needs to be recalculated when stats change.
     @stats.change_listeners << lambda { |stat, currentValue, newValue|
@@ -156,6 +170,20 @@ class Character
     end
 
     party.remove!(self)
+  end
+
+  # Sets the character's current job.
+  #
+  # @param job [Job] The character's current job.
+  # @raise [ArgumentError] If `job` is not an instance of `Job` or `nil`
+  def job=(job)
+    unless job.is_a?(Job) || job.nil?
+      raise ArgumentError.new("`job` muest be an instance of Job or `nil`")
+    end
+
+    @job = job
+    @stats = (job ? @base_stats + job.stats : @base_stats.clone)
+    recalculate_attributes if @level
   end
 
   private
