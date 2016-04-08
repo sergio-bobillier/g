@@ -232,14 +232,14 @@ class TestCharacter < Minitest::Unit::TestCase
   end
 
   # Tests character's races as follows:
-  #   Checks that a race is required to create a character.
-  #   Checks that an exception is raised if the Character's constructor is given
-  #     something besides a race.
-  #   Checks that the race used on character creation is returned by the race
-  #     attribute.
-  #   Checks that the race cannot be changed after character creation.
-  #   Checks that the stats are properly calculated using the given race.
-  #   Checks that attributes are properly calculated using the modified stats.
+  # - Checks that a race is required to create a character.
+  # - Checks that an exception is raised if the Character's constructor is given
+  #   something besides a race.
+  # - Checks that the race used on character creation is returned by the race
+  #   attribute.
+  # - Checks that the race cannot be changed after character creation.
+  # - Checks that the stats are properly calculated using the given race.
+  # - Checks that attributes are properly calculated using the modified stats.
   def test_races
     assert_raises ArgumentError do
       Character.new                     # No race given
