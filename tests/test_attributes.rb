@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require_relative "../attributes"
 
-class TestAttributes < Minitest::Unit::TestCase
+class TestAttributes < Minitest::Test
 
   # Tests the class initializer. Checks that if no Stats object is given then
   # all attributes are initialized to their minimum value. Also checks that the

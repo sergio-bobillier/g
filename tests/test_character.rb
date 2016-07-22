@@ -4,7 +4,7 @@ require_relative "../libraries/jobs_library"
 require_relative "../libraries/races_library"
 require_relative "../party"
 
-class TestCharacter < Minitest::Unit::TestCase
+class TestCharacter < Minitest::Test
 
   # A race with no particular attributes (needed for character creation).
   BLANK_RACE = Race.new(Stats.new({:con => 0, :str => 0, :dex => 0, :int => 0, :men => 0, :wit => 0}))

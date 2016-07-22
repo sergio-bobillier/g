@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require_relative "../stats"
 
-class TestStats < Minitest::Unit::TestCase
+class TestStats < Minitest::Test
   # Checks that the class initializer works properly under various
   # circumstances
   def test_initializer

@@ -11,7 +11,7 @@ require_relative "../job"
 # @see TestCharacterModifier
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
-class TestJob < Minitest::Unit::TestCase
+class TestJob < Minitest::Test
 
   # Test that the Job class can be instantiated.
   def test_instantiation

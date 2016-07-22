@@ -5,7 +5,7 @@ require_relative "../party"
 # Tests the Party class.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
-class TestParty < Minitest::Unit::TestCase
+class TestParty < Minitest::Test
 
   # A race with no particular attributes (needed for character creation).
   BLANK_RACE = Race.new(Stats.new({:con => 0, :str => 0, :dex => 0, :int => 0, :men => 0, :wit => 0}))

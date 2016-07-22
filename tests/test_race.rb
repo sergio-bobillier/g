@@ -5,7 +5,7 @@ require_relative "../race"
 # Tests the Race class.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
-class TestRace < Minitest::Unit::TestCase
+class TestRace < Minitest::Test
 
   # Tests that the initializer method can create a race without en element,
   # that it can create a race with an element and a rece with two (or more)

@@ -5,7 +5,7 @@ require_relative "../character_modifier"
 # Test cases fot the CharacterModifier class.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
-class TestCharacterModifier < Minitest::Unit::TestCase
+class TestCharacterModifier < Minitest::Test
 
   # Tests the initialize method to make sure an exception is raised when an
   # invalid stats parameter is given and that the resulting Stats object within
