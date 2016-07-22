@@ -1,5 +1,3 @@
-require_relative "hash_properties"
-
 # Models the character's basic stats.
 #
 # - con - Constitution: Influences physical defense, resistance to physical
@@ -16,7 +14,6 @@ require_relative "hash_properties"
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class Stats
-  include HashProperties
 
   # The maximum value that character stats (str, con, etc) can get.
   MAX_STATS = 50
@@ -50,21 +47,32 @@ class Stats
 
     if stats
       stats.each do |stat, value|
-        raise ArgumentError.new("Unrecognized stat #{stat}") unless @stats.has_key?(stat)
+        validate_stat(stat)
         set_stat(stat, value)
       end
     end
   end
 
-  # Called by Ruby then the called method cannot be found. Checks if the method
-  # name matches one of the stats and sets or returns that stat's value.
+  # Returns the value of the given stat.
   #
-  # @param method [Symbol] The called method name.
-  # @param args [Array] The method parameters.
-  def method_missing(method, *args)
-    hash_properties(@stats, method, args) do |stat, value|
-      set_stat(stat, value)
-    end
+  # @param stat [Symbol] The stat's name
+  # @return [Integer] The value of the stat.
+  # @raise [ArgumentError] If the stat's name is not a symbol or is not a valid
+  #   stat name.
+  def [](stat)
+    validate_stat(stat)
+    @stats[stat]
+  end
+
+  # Sets the given stat's value.
+  #
+  # @param stat [Symbol] The stat's name
+  # @param value [Integer] The new value for the stat.
+  # @raise [ArgumentError] If the stat's name is not a symbol or is not a valid
+  #   stat name or the given value is not an integer.
+  def []=(stat, value)
+    validate_stat(stat)
+    set_stat(stat, value)
   end
 
   # Adds the stat values of the given object to the stat values of the receiver.
@@ -75,7 +83,7 @@ class Stats
     raise ArgumentError.new("Stats expected but got #{stats.class}") unless stats.is_a?(Stats)
 
     @stats.each do |stat, value|
-      set_stat(stat, value + stats.send(stat))
+      set_stat(stat, value + stats[stat])
     end
 
     return self
@@ -98,12 +106,23 @@ class Stats
 
   private
 
+  # Validates that the given stat name is valid.
+  #
+  # @param stat [Stat] The stat's name.
+  # @raise [ArgumentError] If the stat's name is not a symbol or is not a valid
+  #   stat name.
+  def validate_stat(stat)
+    raise ArgumentError.new("Stat names should be symbols, got #{stat.class} instead") unless stat.is_a?(Symbol)
+    raise ArgumentError.new("Unrecognized stat #{stat}") unless @stats.has_key?(stat)
+  end
+
   # Sets a stat's value. If the value is less than zero then the stat will be
   # set to zero. If the value is greater than MAX_STATS then the stat will be
   # set to MAX_STATS.
   #
   # @param stat [Symbol] The stat to set.
   # @param value [Integer] The value.
+  # @raise [ArgumentError] If the value is not an integer.
   def set_stat(stat, value)
     raise ArgumentError.new("Integer expected but #{value.class} received") unless value.is_a?(Integer)
     value = MAX_STATS if value > MAX_STATS
@@ -132,9 +151,8 @@ class Stats
     new_stats = Stats.new
 
     @stats.each do |stat, value|
-      setter = "#{stat}=".to_sym
-      addition = (stats ? stats.send(stat) : 0)
-      new_stats.send(setter, value + addition)
+      addition = (stats ? stats[stat] : 0)
+      new_stats[stat] = value + addition
     end
 
     return new_stats

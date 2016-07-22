@@ -1,63 +1,61 @@
-require_relative "hash_properties"
 require_relative "stats"
 
 # Models the attributes and stats of characters.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class Attributes
-  include HashProperties
 
   # Character attributes with their types, bounds and other constraints. It Also
   # contains a lamda function to calculate the attribute value based on the
   # character stats and level.
   ATTRIBUTES = {
     :defense => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| (50*(stats.con.to_f/10)*(1+(0.2*level))).floor }
+      :formula => lambda { |stats, level| (50*(stats[:con].to_f/10)*(1+(0.2*level))).floor }
     },
     :total_health => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| ((stats.con-20)*100*(0.5*(level.to_f/4))+(stats.con.to_f/8)*(300*(0.3*(level.to_f/2)))+(150-level)).floor }
+      :formula => lambda { |stats, level| ((stats[:con]-20)*100*(0.5*(level.to_f/4))+(stats[:con].to_f/8)*(300*(0.3*(level.to_f/2)))+(150-level)).floor }
     },
     :attack => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| (40*(stats.str.to_f/9)*(1+(0.3*level.to_f))).floor }
+      :formula => lambda { |stats, level| (40*(stats[:str].to_f/9)*(1+(0.3*level.to_f))).floor }
     },
     :critical_damage => {:min => 0, :type => Float,
-      :formula => lambda { |stats, level| (1+(level.to_f/50)+((stats.str.to_f/500)*level.to_f*0.05)).round(2) }
+      :formula => lambda { |stats, level| (1+(level.to_f/50)+((stats[:str].to_f/500)*level.to_f*0.05)).round(2) }
     },
     :critical_rate => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| (((level.to_f/82*0.5)+stats.dex.to_f/400)*0.7).round(2) }
+      :formula => lambda { |stats, level| (((level.to_f/82*0.5)+stats[:dex].to_f/400)*0.7).round(2) }
     },
     :evasion => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| ((stats.dex.to_f/200)+(level.to_f/500)).round(2) }
+      :formula => lambda { |stats, level| ((stats[:dex].to_f/200)+(level.to_f/500)).round(2) }
     },
     :accuracy => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| ((stats.dex.to_f/37)+(level/1000)).round(2) }
+      :formula => lambda { |stats, level| ((stats[:dex].to_f/37)+(level/1000)).round(2) }
     },
     :speed => {:min => 0, :max => 70, :type => Integer,
-      :formula => lambda { |stats, level| (20+((stats.dex-20)*2)+(level.to_f*0.1+stats.dex.to_f*0.02)).to_i }
+      :formula => lambda { |stats, level| (20+((stats[:dex]-20)*2)+(level.to_f*0.1+stats[:dex].to_f*0.02)).to_i }
     },
     :magic_power => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| (40*(stats.int.to_f/6)*(1+(0.3*level.to_f))).floor }
+      :formula => lambda { |stats, level| (40*(stats[:int].to_f/6)*(1+(0.3*level.to_f))).floor }
     },
     :magic_critical_damage => {:min => 0, :type => Float,
-      :formula => lambda { |stats, level| (1+(level.to_f/55)+((stats.int.to_f/490)*level.to_f*0.06)).round(2) }
+      :formula => lambda { |stats, level| (1+(level.to_f/55)+((stats[:int].to_f/490)*level.to_f*0.06)).round(2) }
     },
     :magic_defense => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| (43*(stats.men.to_f/7)*(1+(0.28*level.to_f))).floor }
+      :formula => lambda { |stats, level| (43*(stats[:men].to_f/7)*(1+(0.28*level.to_f))).floor }
     },
     :total_mana => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| ((stats.men-20)*100*(0.5*(level.to_f/4))+(stats.men.to_f/8)*(300*(0.2*(level.to_f/5)))+(150-level)).floor }
+      :formula => lambda { |stats, level| ((stats[:men]-20)*100*(0.5*(level.to_f/4))+(stats[:men].to_f/8)*(300*(0.2*(level.to_f/5)))+(150-level)).floor }
     },
     :magic_critical_rate => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| (((level.to_f/82*0.5)+stats.wit.to_f/400)*0.4).round(2) }
+      :formula => lambda { |stats, level| (((level.to_f/82*0.5)+stats[:wit].to_f/400)*0.4).round(2) }
     },
     :magic_accuracy => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| (((20+(stats.wit.to_f/3))/38)+(level.to_f/400)).round(2) }
+      :formula => lambda { |stats, level| (((20+(stats[:wit].to_f/3))/38)+(level.to_f/400)).round(2) }
     },
     :magic_evasion => {:min => 0, :max => 1, :type => Float,
-      :formula => lambda { |stats, level| ((stats.wit.to_f/175)+(level.to_f/400)).round(2) }
+      :formula => lambda { |stats, level| ((stats[:wit].to_f/175)+(level.to_f/400)).round(2) }
     },
     :casting_speed => {:min => 0, :type => Integer,
-      :formula => lambda { |stats, level| ((stats.wit.to_f*12.54)+((stats.wit.to_f-20)*0.65*level.to_f)+(3*level.to_f)).floor }
+      :formula => lambda { |stats, level| ((stats[:wit].to_f*12.54)+((stats[:wit].to_f-20)*0.65*level.to_f)+(3*level.to_f)).floor }
     },
 
     # Transient attributes
@@ -83,16 +81,27 @@ class Attributes
     calculate_attributes(stats, level, true) if stats
   end
 
-  # Called by Ruby when a non-existing method is invoked. The function calls the
-  # hash_properties method to try and find a matching key in the attributes
-  # array and calls the set_attribute method if it finds it.
+  # Returns the value of the given attribute.
   #
-  # @param method [Symbol] The called method's name
-  # @param args [Array] The parameters passed to the method.
-  def method_missing(method, *args)
-    hash_properties(@attributes, method, args) do |attribute, value|
-      set_attribute(attribute, value)
-    end
+  # @param attribute [Symbol] The attribute's name
+  # @return The attribute's value.
+  # @raise [ArgumentError] If the given attribute name is not a symbol or is not
+  #   the name of a known attribute.
+  def [](attribute)
+    validate_attribute(attribute)
+    @attributes[attribute]
+  end
+
+  # Sets the value of the given attribute.
+  #
+  # @param attribute [Symbol] The attribute's name
+  # @param value The attribute's value.
+  # @raise [ArgumentError] If the given attribute name is not a symbol or is not
+  #   the name of a known attribute or the type of the value parameter is
+  #   unacceptable.
+  def []=(attribute, value)
+    validate_attribute(attribute)
+    set_attribute(attribute, value)
   end
 
   # Recalculate the attributes using the given stats object and level.
@@ -121,6 +130,17 @@ class Attributes
   end
 
   private
+
+  # Validates that the given attribute name is a Symbol and the name of a known
+  # attribute.
+  #
+  # @param attribute [Symbol] The name of the attribute.
+  # @raise [ArgumentError] If the given attribute name is not a symbol or is not
+  #   the name of a known attribute.
+  def validate_attribute(attribute)
+    raise ArgumentError.new("Attribute name expected to be a Symbol, #{attribute.class} given instead") unless attribute.is_a?(Symbol)
+    raise ArgumentError.new("Unrecognized attribute #{attribute}") unless ATTRIBUTES.has_key?(attribute)
+  end
 
   # Sets the specified attribute to the given value.
   #

@@ -165,9 +165,9 @@ class TestCharacter < Minitest::Test
       character.stats = nil
     end
 
-    original_value = character.stats.wit
-    character.stats.wit = original_value + 5
-    assert_equal(original_value + 5, character.stats.wit, "Character's stats should be mutable")
+    original_value = character.stats[:wit]
+    character.stats[:wit] = original_value + 5
+    assert_equal(original_value + 5, character.stats[:wit], "Character's stats should be mutable")
   end
 
   # Tests that an instance of the Attributes class is created with the caracter,
@@ -181,9 +181,9 @@ class TestCharacter < Minitest::Test
       character.attributes = nil
     end
 
-    original_value = character.attributes.casting_speed
-    character.attributes.casting_speed = original_value + 100
-    assert_equal(original_value + 100, character.attributes.casting_speed, "Character attributes should be mutable")
+    original_value = character.attributes[:casting_speed]
+    character.attributes[:casting_speed] = original_value + 100
+    assert_equal(original_value + 100, character.attributes[:casting_speed], "Character attributes should be mutable")
   end
 
   # Tests that character attributes are calculated when the character is
@@ -191,7 +191,7 @@ class TestCharacter < Minitest::Test
   def test_attributes_calculated
     character = Character.new(BLANK_RACE)
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.critical_rate, character.attributes.critical_rate, "Character attributes should be calculated when the character is created")
+    assert_equal(attributes[:critical_rate], character.attributes[:critical_rate], "Character attributes should be calculated when the character is created")
   end
 
   # Tests that the character attributes are re-calculated when the character's
@@ -199,37 +199,37 @@ class TestCharacter < Minitest::Test
   def test_attributes_on_level_change
     character = Character.new(BLANK_RACE)
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be calculated when the character is created")
-    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+    assert_equal(attributes[:attack], character.attributes[:attack], "Character attributes should be calculated when the character is created")
+    assert_equal(attributes[:health], character.attributes[:total_health], "Transient attributes should be reset when level changes")
 
     character.level = 6
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character level is set")
-    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+    assert_equal(attributes[:attack], character.attributes[:attack], "Character attributes should be re-calculated when the character level is set")
+    assert_equal(attributes[:health], character.attributes[:total_health], "Transient attributes should be reset when level changes")
 
     character.level += 1
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character level is mutated")
-    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+    assert_equal(attributes[:attack], character.attributes[:attack], "Character attributes should be re-calculated when the character level is mutated")
+    assert_equal(attributes[:health], character.attributes[:total_health], "Transient attributes should be reset when level changes")
 
     character.experience += character.next_level * 2
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
-    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+    assert_equal(attributes[:attack], character.attributes[:attack], "Character attributes should be re-calculated when the character levels up by experience gain")
+    assert_equal(attributes[:health], character.attributes[:total_health], "Transient attributes should be reset when level changes")
 
     character.experience += character.next_level * 5
     attributes = Attributes.new(character.stats, character.level)
-    assert_equal(attributes.attack, character.attributes.attack, "Character attributes should be re-calculated when the character levels up by experience gain")
-    assert_equal(attributes.health, character.attributes.total_health, "Transient attributes should be reset when level changes")
+    assert_equal(attributes[:attack], character.attributes[:attack], "Character attributes should be re-calculated when the character levels up by experience gain")
+    assert_equal(attributes[:health], character.attributes[:total_health], "Transient attributes should be reset when level changes")
   end
 
   # Tests that attributes are recalculated when stats change.
   def test_attribute_recalculation_on_stats_change
     character = Character.new(BLANK_RACE)
-    currentValue = character.attributes.casting_speed
-    character.stats.wit += 4
+    currentValue = character.attributes[:casting_speed]
+    character.stats[:wit] += 4
 
-    refute_equal(currentValue, character.attributes.casting_speed, "Attributes should be recalculated when stats change")
+    refute_equal(currentValue, character.attributes[:casting_speed], "Attributes should be recalculated when stats change")
   end
 
   # Tests character's races as follows:
@@ -260,20 +260,20 @@ class TestCharacter < Minitest::Test
     stats = Stats.new
     stats << RacesLibrary::ELF.stats
 
-    assert_equal(stats.con, character.stats.con, "Character's constitution should be #{stats.con}")
-    assert_equal(stats.str, character.stats.str, "Character's strength should be #{stats.str}")
-    assert_equal(stats.dex, character.stats.dex, "Character's dexterity should be #{stats.dex}")
-    assert_equal(stats.int, character.stats.int, "Character's intelligence should be #{stats.int}")
-    assert_equal(stats.men, character.stats.men, "Character's mental strength should be #{stats.men}")
-    assert_equal(stats.wit, character.stats.wit, "Character's wisdom should be #{stats.wit}")
+    assert_equal(stats[:con], character.stats[:con], "Character's constitution should be #{stats[:con]}")
+    assert_equal(stats[:str], character.stats[:str], "Character's strength should be #{stats[:str]}")
+    assert_equal(stats[:dex], character.stats[:dex], "Character's dexterity should be #{stats[:dex]}")
+    assert_equal(stats[:int], character.stats[:int], "Character's intelligence should be #{stats[:int]}")
+    assert_equal(stats[:men], character.stats[:men], "Character's mental strength should be #{stats[:men]}")
+    assert_equal(stats[:wit], character.stats[:wit], "Character's wisdom should be #{stats[:wit]}")
 
     character = Character.new(RacesLibrary::HUMAN, 13)
-    assert_equal(413, character.attributes.defense, "Character's defense should be 414")
-    assert_equal(500, character.attributes.attack, "Character's attack should be 500")
-    assert_equal(0.10, character.attributes.critical_rate, "Character's critical rate should be 0.10")
-    assert_equal(751, character.attributes.magic_power, "Character's magic power should be 751")
-    assert_equal(655, character.attributes.magic_defense, "Character's magic defense should be 655")
-    assert_equal(0.05, character.attributes.magic_critical_rate, "Character's magic crtical rate should be 0.05")
+    assert_equal(413, character.attributes[:defense], "Character's defense should be 414")
+    assert_equal(500, character.attributes[:attack], "Character's attack should be 500")
+    assert_equal(0.10, character.attributes[:critical_rate], "Character's critical rate should be 0.10")
+    assert_equal(751, character.attributes[:magic_power], "Character's magic power should be 751")
+    assert_equal(655, character.attributes[:magic_defense], "Character's magic defense should be 655")
+    assert_equal(0.05, character.attributes[:magic_critical_rate], "Character's magic crtical rate should be 0.05")
   end
 
   # Performs tests for the character's job setting and changing
@@ -292,12 +292,12 @@ class TestCharacter < Minitest::Test
     # Checks that the character's attributes are not affected if no job is
     # supplied on creation.
     message = "If no race is given attributes should not be affected"
-    assert_equal(261, character.attributes.total_health, message)
-    assert_equal(1.02, character.attributes.critical_damage, message)
-    assert_equal(0.04, character.attributes.critical_rate, message)
-    assert_equal(173, character.attributes.magic_power, message)
-    assert_equal(157, character.attributes.magic_defense, message)
-    assert_equal(0.12, character.attributes.magic_evasion, message)
+    assert_equal(261, character.attributes[:total_health], message)
+    assert_equal(1.02, character.attributes[:critical_damage], message)
+    assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(173, character.attributes[:magic_power], message)
+    assert_equal(157, character.attributes[:magic_defense], message)
+    assert_equal(0.12, character.attributes[:magic_evasion], message)
 
     # Checks that a character can be created with a job and that the job
     # property returns the correct job.
@@ -307,12 +307,12 @@ class TestCharacter < Minitest::Test
     # Checks that the character's attributes are affected accordingly when a job
     # is set.
     message = "Attributes should be affected when a job is set."
-    assert_equal(261, character.attributes.total_health, message)
-    assert_equal(1.02, character.attributes.critical_damage, message)
-    assert_equal(0.04, character.attributes.critical_rate, message)
-    assert_equal(173, character.attributes.magic_power, message)
-    assert_equal(180, character.attributes.magic_defense, message)
-    assert_equal(0.13, character.attributes.magic_evasion, message)
+    assert_equal(261, character.attributes[:total_health], message)
+    assert_equal(1.02, character.attributes[:critical_damage], message)
+    assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(173, character.attributes[:magic_power], message)
+    assert_equal(180, character.attributes[:magic_defense], message)
+    assert_equal(0.13, character.attributes[:magic_evasion], message)
 
     # Checks that an exception is raised if something besides a Job is used when
     # setting the character's job.
@@ -326,15 +326,15 @@ class TestCharacter < Minitest::Test
 
     # Checks that attributes are re-calculated when a new job is set
     message = "Attributes should be recalculated when a job changes"
-    assert_equal(352, character.attributes.total_health, message)
-    assert_equal(1.02, character.attributes.critical_damage, message)
-    assert_equal(0.04, character.attributes.critical_rate, message)
-    assert_equal(173, character.attributes.magic_power, message)
-    assert_equal(172, character.attributes.magic_defense, message)
-    assert_equal(0.12, character.attributes.magic_evasion, message)
+    assert_equal(352, character.attributes[:total_health], message)
+    assert_equal(1.02, character.attributes[:critical_damage], message)
+    assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(173, character.attributes[:magic_power], message)
+    assert_equal(172, character.attributes[:magic_defense], message)
+    assert_equal(0.12, character.attributes[:magic_evasion], message)
 
     # Checks that transient attributes are not reset when a job changes
-    assert_equal(261, character.attributes.health, "Transient attributes should not be reset on job change")
+    assert_equal(261, character.attributes[:health], "Transient attributes should not be reset on job change")
 
     # Checks that the character's job can be removed after creation.
     character.job = nil
@@ -342,11 +342,11 @@ class TestCharacter < Minitest::Test
 
     # Checks that attributes are re-calculated when a job is removed.
     message = "Attributes should be recalculated when a job is removed"
-    assert_equal(261, character.attributes.total_health, message)
-    assert_equal(1.02, character.attributes.critical_damage, message)
-    assert_equal(0.04, character.attributes.critical_rate, message)
-    assert_equal(173, character.attributes.magic_power, message)
-    assert_equal(157, character.attributes.magic_defense, message)
-    assert_equal(0.12, character.attributes.magic_evasion, message)
+    assert_equal(261, character.attributes[:total_health], message)
+    assert_equal(1.02, character.attributes[:critical_damage], message)
+    assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(173, character.attributes[:magic_power], message)
+    assert_equal(157, character.attributes[:magic_defense], message)
+    assert_equal(0.12, character.attributes[:magic_evasion], message)
   end
 end
