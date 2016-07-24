@@ -226,10 +226,13 @@ class TestCharacter < Minitest::Test
   # Tests that attributes are recalculated when stats change.
   def test_attribute_recalculation_on_stats_change
     character = Character.new(BLANK_RACE)
-    currentValue = character.attributes[:casting_speed]
+    current_as = character.attributes[:attack_speed]
+    current_cs = character.attributes[:casting_speed]
     character.stats[:wit] += 4
+    character.stats[:dex] += 4
 
-    refute_equal(currentValue, character.attributes[:casting_speed], "Attributes should be recalculated when stats change")
+    refute_equal(current_as, character.attributes[:attack_speed], "Attributes should be recalculated when stats change")
+    refute_equal(current_cs, character.attributes[:casting_speed], "Attributes should be recalculated when stats change")
   end
 
   # Tests character's races as follows:
@@ -271,6 +274,7 @@ class TestCharacter < Minitest::Test
     assert_equal(413, character.attributes[:defense], "Character's defense should be 414")
     assert_equal(500, character.attributes[:attack], "Character's attack should be 500")
     assert_equal(0.10, character.attributes[:critical_rate], "Character's critical rate should be 0.10")
+    assert_equal(172, character.attributes[:attack_speed], "Character's attack speed should be 172")
     assert_equal(751, character.attributes[:magic_power], "Character's magic power should be 751")
     assert_equal(655, character.attributes[:magic_defense], "Character's magic defense should be 655")
     assert_equal(0.05, character.attributes[:magic_critical_rate], "Character's magic crtical rate should be 0.05")
@@ -291,10 +295,11 @@ class TestCharacter < Minitest::Test
 
     # Checks that the character's attributes are not affected if no job is
     # supplied on creation.
-    message = "If no race is given attributes should not be affected"
+    message = "If no job is given attributes should not be affected"
     assert_equal(261, character.attributes[:total_health], message)
     assert_equal(1.02, character.attributes[:critical_damage], message)
     assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(102, character.attributes[:attack_speed], message)
     assert_equal(173, character.attributes[:magic_power], message)
     assert_equal(157, character.attributes[:magic_defense], message)
     assert_equal(0.12, character.attributes[:magic_evasion], message)
@@ -310,6 +315,7 @@ class TestCharacter < Minitest::Test
     assert_equal(261, character.attributes[:total_health], message)
     assert_equal(1.02, character.attributes[:critical_damage], message)
     assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(102, character.attributes[:attack_speed], message)
     assert_equal(173, character.attributes[:magic_power], message)
     assert_equal(180, character.attributes[:magic_defense], message)
     assert_equal(0.13, character.attributes[:magic_evasion], message)
@@ -329,6 +335,7 @@ class TestCharacter < Minitest::Test
     assert_equal(352, character.attributes[:total_health], message)
     assert_equal(1.02, character.attributes[:critical_damage], message)
     assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(102, character.attributes[:attack_speed], message)
     assert_equal(173, character.attributes[:magic_power], message)
     assert_equal(172, character.attributes[:magic_defense], message)
     assert_equal(0.12, character.attributes[:magic_evasion], message)
@@ -345,6 +352,7 @@ class TestCharacter < Minitest::Test
     assert_equal(261, character.attributes[:total_health], message)
     assert_equal(1.02, character.attributes[:critical_damage], message)
     assert_equal(0.04, character.attributes[:critical_rate], message)
+    assert_equal(102, character.attributes[:attack_speed], message)
     assert_equal(173, character.attributes[:magic_power], message)
     assert_equal(157, character.attributes[:magic_defense], message)
     assert_equal(0.12, character.attributes[:magic_evasion], message)

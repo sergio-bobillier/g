@@ -24,6 +24,9 @@ class Attributes
     :critical_rate => {:min => 0, :max => 1, :type => Float,
       :formula => lambda { |stats, level| (((level.to_f/82*0.5)+stats[:dex].to_f/400)*0.7).round(2) }
     },
+    :attack_speed => {:min => 0, :type => Integer,
+      :formula => lambda { |stats, level| ((stats[:dex]*5)+((stats[:dex]-15)*level.to_f*0.55)).floor }
+    },
     :evasion => {:min => 0, :max => 1, :type => Float,
       :formula => lambda { |stats, level| ((stats[:dex].to_f/200)+(level.to_f/500)).round(2) }
     },

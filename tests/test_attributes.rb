@@ -69,6 +69,7 @@ class TestAttributes < Minitest::Test
     assert_equal(115, attributes[:attack], "attack should be equal to 115")
     assert_equal(1.02, attributes[:critical_damage], "critical_damage should be equal to 1.02")
     assert_equal(0.04, attributes[:critical_rate], "critical_rate should be equal to 0.04")
+    assert_equal(102, attributes[:attack_speed], "attack speed should be equal to 102")
     assert_equal(0.1, attributes[:evasion], "evasion should be equal to 0.1")
     assert_equal(0.54, attributes[:accuracy], "accuracy should be equal to 0.54")
     assert_equal(20, attributes[:speed], "speed should be equal to 20")
@@ -131,18 +132,22 @@ class TestAttributes < Minitest::Test
     stats = Stats.new
     attributes = Attributes.new(stats)
     assert_equal(179, attributes[:total_mana], "total_mana should be equal to 179 at level 1")
+    assert_equal(102, attributes[:attack_speed], "attack speed should be equal to 102 at level 1")
     assert_equal(0.02, attributes[:magic_critical_rate], "magic_critial_rate should be equal to 0.02 at level 1")
 
     attributes.calculate_attributes(stats, 2)
     assert_equal(208, attributes[:total_mana], "total_mana should be equal to 208 at level 2")
+    assert_equal(105, attributes[:attack_speed], "attack speed should be equal to 105 at level 2")
     assert_equal(0.02, attributes[:magic_critical_rate], "magic_critial_rate should be equal to 0.02 at level 2")
 
     attributes.calculate_attributes(stats, 5)
     assert_equal(295, attributes[:total_mana], "total_mana should be equal to 295 at level 5")
+    assert_equal(113, attributes[:attack_speed], "attack speed should be equal to 113 at level 5")
     assert_equal(0.03, attributes[:magic_critical_rate], "magic_critial_rate should be equal to 0.03 at level 5")
 
     attributes.calculate_attributes(stats, 10)
     assert_equal(440, attributes[:total_mana], "total_mana should be equal to 440 at level 10")
+    assert_equal(127, attributes[:attack_speed], "attack speed should be equal to 127 at level 10")
     assert_equal(0.04, attributes[:magic_critical_rate], "magic_critial_rate should be equal to 0.04 at level 10")
   end
 end
