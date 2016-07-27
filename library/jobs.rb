@@ -5,7 +5,7 @@ require_relative "../job"
 # keep it as simple as possible.
 #
 # @author Sergio Bobillier C. <sergio.bobillier@gmail.com>
-module JobsLibrary
+module Jobs
 
   WIZARD = Job.new(Stats.new({:con => 0, :str => 0, :dex => 0, :int => 5, :men => 1, :wit => 3}))
   KNIGHT = Job.new(Stats.new({:con => 5, :str => 2, :dex => 0, :int => 0, :men => 2, :wit => 0}))

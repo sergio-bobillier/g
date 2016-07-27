@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require_relative "../character"
-require_relative "../libraries/jobs_library"
-require_relative "../libraries/races_library"
+require_relative "../library/jobs"
+require_relative "../library/races"
 require_relative "../party"
 
 class TestCharacter < Minitest::Test
@@ -253,15 +253,15 @@ class TestCharacter < Minitest::Test
       Character.new("hello")            # `race` is not a Race
     end
 
-    character = Character.new(RacesLibrary::ELF)
-    assert_equal(RacesLibrary::ELF, character.race, "The character should be an elf")
+    character = Character.new(Races::ELF)
+    assert_equal(Races::ELF, character.race, "The character should be an elf")
 
     assert_raises NoMethodError do
-      character.race = RacesLibrary::DARK_ELF
+      character.race = Races::DARK_ELF
     end
 
     stats = Stats.new
-    stats << RacesLibrary::ELF.stats
+    stats << Races::ELF.stats
 
     assert_equal(stats[:con], character.stats[:con], "Character's constitution should be #{stats[:con]}")
     assert_equal(stats[:str], character.stats[:str], "Character's strength should be #{stats[:str]}")
@@ -270,7 +270,7 @@ class TestCharacter < Minitest::Test
     assert_equal(stats[:men], character.stats[:men], "Character's mental strength should be #{stats[:men]}")
     assert_equal(stats[:wit], character.stats[:wit], "Character's wisdom should be #{stats[:wit]}")
 
-    character = Character.new(RacesLibrary::HUMAN, 13)
+    character = Character.new(Races::HUMAN, 13)
     assert_equal(413, character.attributes[:defense], "Character's defense should be 414")
     assert_equal(500, character.attributes[:attack], "Character's attack should be 500")
     assert_equal(0.10, character.attributes[:critical_rate], "Character's critical rate should be 0.10")
@@ -306,8 +306,8 @@ class TestCharacter < Minitest::Test
 
     # Checks that a character can be created with a job and that the job
     # property returns the correct job.
-    character = Character.new(BLANK_RACE, 1, JobsLibrary::PRIEST)
-    assert_equal(JobsLibrary::PRIEST, character.job, "Should be able to create a character with a job")
+    character = Character.new(BLANK_RACE, 1, Jobs::PRIEST)
+    assert_equal(Jobs::PRIEST, character.job, "Should be able to create a character with a job")
 
     # Checks that the character's attributes are affected accordingly when a job
     # is set.
@@ -327,8 +327,8 @@ class TestCharacter < Minitest::Test
     end
 
     # Checks that the character's job can be changed after creation.
-    character.job = JobsLibrary::KNIGHT
-    assert_equal(JobsLibrary::KNIGHT, character.job, "Should be able to change the job after creation")
+    character.job = Jobs::KNIGHT
+    assert_equal(Jobs::KNIGHT, character.job, "Should be able to change the job after creation")
 
     # Checks that attributes are re-calculated when a new job is set
     message = "Attributes should be recalculated when a job changes"
