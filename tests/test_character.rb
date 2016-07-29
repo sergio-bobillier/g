@@ -152,6 +152,12 @@ class TestCharacter < Minitest::Test
     character.experience = character.next_level * 4
     assert_equal(Character::MAX_LEVEL, character.level, "Character's level should be #{Character::MAX_LEVEL}")
     assert_equal(character.next_level, character.experience, "Character's experience should be #{character.next_level}")
+
+    # Tests that the character levels up correctly even if the experience points
+    # are awarded one at a time.
+    character = Character.new(BLANK_RACE)
+    1000.times { character.experience += 1 }
+    assert_equal(5, character.level, "Character's level should be 5 after getting 1000 experience")
   end
 
   # Tests that an instance of the Stats class is created with the character,
