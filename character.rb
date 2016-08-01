@@ -1,5 +1,10 @@
 require_relative "attributes"
 require_relative "exceptions/character_not_in_party_exception"
+require_relative "exceptions/crystal_already_bound_exception"
+require_relative "exceptions/crystal_limit_reached_exception"
+require_relative "exceptions/level_too_low_for_crystal_binding_exception"
+require_relative "exceptions/same_element_crystal_already_bound_exception"
+require_relative "crystal"
 require_relative "job"
 require_relative "race"
 require_relative "stats"
@@ -14,6 +19,9 @@ class Character
   # Experience needed to reach level 2. The experience needed for level up is
   # calculated using this figure as a base.
   BASE_EXP = 100
+
+  # The maximum number of crystals a character can have.
+  MAX_CRYSTALS = 3
 
   # @return [Party] The party the character belongs to.
   attr_accessor :party
@@ -63,6 +71,7 @@ class Character
     }
 
     @attributes = Attributes.new
+    @crystals = []
 
     # NOTE: Setting the level should be the last thing in the initializer
     self.level = level
@@ -184,6 +193,52 @@ class Character
     @job = job
     @stats = (job ? @base_stats + job.stats : @base_stats.clone)
     recalculate_attributes if @level
+  end
+
+  # Returns an array with the crystals that are currently bound to the
+  # character.
+  #
+  # @return [Array] The bound crystals array.
+  def crystals
+    return @crystals.clone
+  end
+
+  # Binds the given crystal to the character.
+  #
+  # @param [Crystal] The crystal to bind.
+  # @raise [ArgumentError] If the given value is not an instance of `Crystal`.
+  # @raise [CrystalLimitReachedException] If the crystal limit has been reached.
+  # @raise [LevelTooLowForCrystalBindingException] If the character's level is
+  #   not high enough to bind another crystal.
+  # @raise [CrystalAlreadyBoundException] If an attempt is made to bind the same
+  #   crystal twice.
+  # @raise [CrystalAlreadyBoundException] If the crystal has already been bound
+  #   to a character.
+  def bind_crystal(crystal)
+    raise ArgumentError.new unless crystal.is_a?(Crystal)
+    raise CrystalLimitReachedException.new if @crystals.length >= MAX_CRYSTALS
+
+    # The first crystal can be bound as soon as the character is created, that
+    # is, when character is at level 1. The second crystal can only be bound
+    # after the character has reached 1 * (MAX_LEVEL/MAX_CRYSTALS), normally
+    # that would be 1 * (50 / 3) = 16. The third crystal can only be bound
+    # after the character has reached 2 * (MAX_LEVEL/MAX_CRSTALS), i.e. 2 *
+    # (50 / 3) = 32 and so on. Note that, if MAX_LEVEL or MAX_CRYSTALS change
+    # these values will change too.
+    min_level = @crystals.length * (MAX_LEVEL / MAX_CRYSTALS)
+    raise LevelTooLowForCrystalBindingException.new if self.level < min_level
+
+    # Do not allow the same crystal to be bound twice
+    raise CrystalAlreadyBoundException.new if @crystals.include?(crystal)
+
+    # Do not allow two crystals with the same element to be bound.
+
+    @crystals.each do |bound_crystal|
+      raise SameElementCrystalAlreadyBoundException.new if bound_crystal.element == crystal.element
+    end
+
+    crystal.bind_to(self)
+    @crystals << crystal
   end
 
   private

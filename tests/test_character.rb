@@ -360,4 +360,87 @@ class TestCharacter < Minitest::Test
     assert_equal(157, character.attributes[:magic_defense], message)
     assert_equal(0.12, character.attributes[:magic_evasion], message)
   end
+
+  # Tests the character -> crystal binding.
+  #
+  # * Tests that that Character's crystals methods returns an array.
+  # * Tests that said array is empty on character creation.
+  # * Tests that the returned array is actually a clone of the real array and
+  #   that changes made to that clone do not affect the character's crystals.
+  # * Tests that crystals can be bound to the character.
+  # * Tests that an error is raised if an attempt is made to bind a crystal
+  #   before the character has reached a high enoguh level.
+  # * Tests that an error is raised if an attempt is made to bind the same
+  #   crystal twice.
+  # * Tests that an error is raised if an attempt is made to bind two crystals
+  #   with the same element.
+  # * Tests that an error is raised if an attempt is made to bind more crystals
+  #   than the character can have.
+  # * Tests than an error is raised if an attempt is made to bind the same
+  #   crystal to two different characters.
+  def test_crystal_binding
+    character = Character.new(BLANK_RACE)
+
+    assert(character.crystals.is_a?(Array), "The crystals array should be an `Array`")
+    assert(character.crystals.empty?, "The crystals array should be empty.")
+
+    crystals = character.crystals
+    crystals << Crystal.new(:fire)
+
+    assert(character.crystals.empty?, "The crystals array should still be empty.")
+
+    crystal = Crystal.new(:water)
+    character.bind_crystal(crystal)
+    assert_equal(1, character.crystals.length, "The character should have one crystal now")
+    assert_equal(crystal, character.crystals[0], "The character should be bound to the crystal")
+    assert_equal(character, crystal.bound_to, "The crystal should be bound to the character")
+
+    assert_raises LevelTooLowForCrystalBindingException do
+      character.bind_crystal(crystal)
+    end
+
+    character.level = (Character::MAX_LEVEL / Character::MAX_CRYSTALS)
+
+    assert_raises CrystalAlreadyBoundException do
+      character.bind_crystal(crystal)
+    end
+
+    crystal2 = Crystal.new(:fire)
+    character.bind_crystal(crystal2)
+
+    assert_equal(2, character.crystals.length, "The character should have two crystals now")
+    assert_equal(crystal2, character.crystals[1], "The character should be bound to the second crystal")
+    assert_equal(character, crystal2.bound_to, "The second crystal should be bound to the character")
+
+    character.level = 2 * (Character::MAX_LEVEL / Character::MAX_CRYSTALS)
+
+    crystal3 = Crystal.new(:fire)
+
+    assert_raises SameElementCrystalAlreadyBoundException do
+      character.bind_crystal(crystal3)
+    end
+
+    crystal3 = Crystal.new(:earth)
+    character.bind_crystal(crystal3)
+    assert_equal(3, character.crystals.length, "The character should have three crystals")
+    assert_equal(crystal3, character.crystals[2], "The character should be bound to the third crystal")
+    assert_equal(character, crystal3.bound_to, "The third crystal should be bound to the character")
+
+    assert_raises CrystalLimitReachedException do
+      character.bind_crystal(crystal3)
+    end
+
+    character1 = Character.new(BLANK_RACE)
+    character2 = Character.new(BLANK_RACE)
+    crystal = Crystal.new(:dark)
+
+    character1.bind_crystal(crystal)
+
+    assert_raises CrystalAlreadyBoundException do
+      character2.bind_crystal(crystal)
+    end
+
+    assert_equal(character1, crystal.bound_to, "The crystal should still be bound to the first character")
+    assert(character2.crystals.empty?, "The binding of the crystal to the second character shouldn't have been completed")
+  end
 end
