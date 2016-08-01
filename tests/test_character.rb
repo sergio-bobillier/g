@@ -3,12 +3,9 @@ require_relative "../character"
 require_relative "../library/jobs"
 require_relative "../library/races"
 require_relative "../party"
+require_relative "blank_race"
 
 class TestCharacter < Minitest::Test
-
-  # A race with no particular attributes (needed for character creation).
-  BLANK_RACE = Race.new(Stats.new({:con => 0, :str => 0, :dex => 0, :int => 0, :men => 0, :wit => 0}))
-
   # Tests that an exception is throw if leave_party is called without joining
   # a party first.
   def test_exception_if_leave_without_joining
