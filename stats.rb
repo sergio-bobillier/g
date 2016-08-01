@@ -4,7 +4,8 @@
 #   debuffs and health
 # - str - Strength: Influences physical attack, physical debuff landing rate
 #   and critical damage
-# - dex - Dexterity: Influences crital rate, evasion, accuracy and speed
+# - dex - Dexterity: Influences crital rate, attack_speed, evasion, accuracy and
+#   speed
 # - int - Intelligence: Influences magic power, magical critical damage and
 #   magical debuff landing rate.
 # - men - Mental Strength: Influences magical defense, resistance to magic
