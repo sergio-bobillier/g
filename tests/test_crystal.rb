@@ -71,11 +71,36 @@ class TestCrystal < Minitest::Test
       crystal.level = Crystal::MAX_LEVEL + 1 # Greater than MAX_LEVEL
     end
 
-    crystal.level = 5
-    assert_equal(5, crystal.level, "Should be able to set the crystal's level")
+    # Tests that the AP required to reach level 2 is initialized correctly.
+
+    assert_equal(Crystal::BASE_AP, crystal.next_level, "The AP required to reach level 2 should be #{Crystal::BASE_AP}")
+
+    # Tests that the crystal level can be changed and that the AP required to
+    # reach the next level is correctly calculated.
+
+    crystal.level = 2
+    required_ap = (Crystal::BASE_AP * 1.5).to_i
+    assert_equal(2, crystal.level, "Should be able to set the crystal's level")
+    assert_equal(required_ap, crystal.next_level, "The AP required to reach level 3 should be #{required_ap}")
+
+    # Tests that the crystal's level can be incremented and that the AP required
+    # to reach the next level is properly calculated.
+
+    required_ap = (crystal.next_level * 1.5).to_i
+    crystal.level += 1
+    assert_equal(3, crystal.level, 'Should be able to increment the crystal\'s level')
+    assert_equal(required_ap, crystal.next_level, "The AP required to reach level 5 should be #{required_ap}")
+
+    # Tests that the crystal's level can be set to any arbitrary level and that
+    # the AP required to reach the next level is properly calculated.
+
+    crystal.level = 7
+    required_ap = Crystal::BASE_AP
+    (crystal.level - 1).times { required_ap = (required_ap * 1.5).to_i }
+    assert_equal(required_ap, crystal.next_level, "The AP required to reach level 8 should be #{required_ap}")
 
     assert_raises ArgumentError do
-      crystal.level = 3                     # Less than current level
+      crystal.level = 1                     # Less than current level
     end
   end
 

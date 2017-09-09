@@ -84,7 +84,8 @@ class Crystal
     # Calculates the AP needed to reach the next level, should be 1.5 times the
     # AP needed to reach the current level.
 
-    @next_level = @level >= 2 ? (@next_level * 1.5).to_i : BASE_AP
+    @next_level = BASE_AP
+    (@level - 1).times { @next_level = (@next_level * 1.5).to_i }
   end
 
   # Sets the crystal's current AP.
