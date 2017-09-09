@@ -1,3 +1,7 @@
 task :tests do
   ruby "tests/tests.rb"
 end
+
+task :lint do
+  sh 'rubocop .'
+end
