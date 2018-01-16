@@ -135,7 +135,7 @@ class Stats
     unless oldValue == value
       @change_listeners.each do |listener|
         next unless listener.respond_to?(:call)
-        listener.call(:stat, @stats[:stat], value)
+        listener.call(stat, @stats[:stat], value)
       end
     end
 
