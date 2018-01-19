@@ -1,4 +1,4 @@
-require_relative "character_modifier"
+require_relative 'character_modifier'
 
 # This class models a character Job. A Job, sometimes referred to as a Class
 # determines the main role the character plays in a party (as a nuker, a healer,
