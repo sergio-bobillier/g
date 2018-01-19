@@ -395,8 +395,10 @@ class TestCharacter < Minitest::Test
     assert_equal(crystal, character.crystals[0], "The character should be bound to the crystal")
     assert_equal(character, crystal.bound_to, "The crystal should be bound to the character")
 
+    crystal2 = Crystal.new(:fire)
+
     assert_raises LevelTooLowForCrystalBindingException do
-      character.bind_crystal(crystal)
+      character.bind_crystal(crystal2)
     end
 
     character.level = (Character::MAX_LEVEL / Character::MAX_CRYSTALS)
@@ -405,7 +407,6 @@ class TestCharacter < Minitest::Test
       character.bind_crystal(crystal)
     end
 
-    crystal2 = Crystal.new(:fire)
     character.bind_crystal(crystal2)
 
     assert_equal(2, character.crystals.length, "The character should have two crystals now")
