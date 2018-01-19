@@ -1,3 +1,5 @@
+# rubocop:disable Style/RedundantReturn
+
 # Models the character's basic stats.
 #
 # - con - Constitution: Influences physical defense, resistance to physical
@@ -15,7 +17,6 @@
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
 class Stats
-
   # The maximum value that character stats (str, con, etc) can get.
   MAX_STATS = 50
 
@@ -33,24 +34,26 @@ class Stats
 
   # Class constructor. Initializes all stats to a default value
   def initialize(stats = nil)
-    raise ArgumentError.new("`stats` should be Hash") unless stats.nil? || stats.is_a?(Hash)
+    unless stats.nil? || stats.is_a?(Hash)
+      raise ArgumentError, '`stats` should be Hash'
+    end
 
     @stats = {
-      :con => DEFAULT_VALUE,
-      :str => DEFAULT_VALUE,
-      :dex => DEFAULT_VALUE,
-      :int => DEFAULT_VALUE,
-      :men => DEFAULT_VALUE,
-      :wit => DEFAULT_VALUE
+      con: DEFAULT_VALUE,
+      str: DEFAULT_VALUE,
+      dex: DEFAULT_VALUE,
+      int: DEFAULT_VALUE,
+      men: DEFAULT_VALUE,
+      wit: DEFAULT_VALUE
     }
 
     @change_listeners = []
 
-    if stats
-      stats.each do |stat, value|
-        validate_stat(stat)
-        set_stat(stat, value)
-      end
+    return unless stats
+
+    stats.each do |stat, value|
+      validate_stat(stat)
+      set_stat(stat, value)
     end
   end
 
@@ -81,7 +84,9 @@ class Stats
   # @param stats [Stats] The stat object whose values should be added.
   # @return [Stats] The receiver object (so multiple Stats object can be added)
   def <<(stats)
-    raise ArgumentError.new("Stats expected but got #{stats.class}") unless stats.is_a?(Stats)
+    unless stats.is_a?(Stats)
+      raise ArgumentError, "Stats expected but got #{stats.class}"
+    end
 
     @stats.each do |stat, value|
       set_stat(stat, value + stats[stat])
@@ -91,13 +96,16 @@ class Stats
   end
 
   # Returns a new instance of Stats whose values are the sum of the receiver
-  # values and the stats values.
+  # values and the other Stats object's values.
   #
-  # @param stats [Stats] The stats object whose values should be added.
+  # @param other [Stats] The Stats object whose values should be added.
   # @return [Stats] A new instance of Stats.
-  def +(stats)
-    raise ArgumentError.new("Stats expected but got #{stats.class} instead") unless stats.is_a?(Stats)
-    derive(stats)
+  def +(other)
+    unless other.is_a?(Stats)
+      raise ArgumentError, "Stats expected but got #{other.class} instead"
+    end
+
+    derive(other)
   end
 
   # @return [Stats] A clone of the receiver object.
@@ -113,8 +121,12 @@ class Stats
   # @raise [ArgumentError] If the stat's name is not a symbol or is not a valid
   #   stat name.
   def validate_stat(stat)
-    raise ArgumentError.new("Stat names should be symbols, got #{stat.class} instead") unless stat.is_a?(Symbol)
-    raise ArgumentError.new("Unrecognized stat #{stat}") unless @stats.has_key?(stat)
+    unless stat.is_a?(Symbol)
+      raise ArgumentError,
+            "Stat names should be symbols, got #{stat.class} instead"
+    end
+
+    raise ArgumentError, "Unrecognized stat #{stat}" unless @stats.key?(stat)
   end
 
   # Sets a stat's value. If the value is less than zero then the stat will be
@@ -125,14 +137,17 @@ class Stats
   # @param value [Integer] The value.
   # @raise [ArgumentError] If the value is not an integer.
   def set_stat(stat, value)
-    raise ArgumentError.new("Integer expected but #{value.class} received") unless value.is_a?(Integer)
+    unless value.is_a?(Integer)
+      raise ArgumentError, "Integer expected but #{value.class} received"
+    end
+
     value = MAX_STATS if value > MAX_STATS
     value = 0 if value < 0
 
-    oldValue = @stats[stat]
+    old_value = @stats[stat]
     @stats[stat] = value
 
-    unless oldValue == value
+    unless old_value == value
       @change_listeners.each do |listener|
         next unless listener.respond_to?(:call)
         listener.call(stat, @stats[:stat], value)
