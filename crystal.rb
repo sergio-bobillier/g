@@ -1,5 +1,5 @@
-require_relative "elements"
-require_relative "exceptions/crystal_already_bound_exception"
+require_relative 'elements'
+require_relative 'exceptions/crystal_already_bound_exception'
 
 # Represents a Crystal. Crystals are the way characters adquire abilities.
 # The crystals level up as they gain AP and "learn" abilities as they do. The
@@ -37,8 +37,15 @@ class Crystal
   #   valid, known element. If the given level is not an integer or is outside
   #   of the allowed level range.
   def initialize(element, level = 1)
-    raise ArgumentError.new("`element` should be a Symbol. #{element.class} given") unless element.is_a?(Symbol)
-    raise ArgumentError.new("`element` should be a valid element") unless ELEMENTS.include?(element)
+    unless element.is_a?(Symbol)
+      raise ArgumentError,
+            "`element` should be a Symbol. #{element.class} given"
+    end
+
+    unless ELEMENTS.include?(element)
+      raise ArgumentError, '`element` should be a valid element'
+    end
+
     @element = element
 
     @level = 1
@@ -54,8 +61,14 @@ class Crystal
   # @raise [ArgumentError] If the given character is not an instance of
   #   `Character`
   def bind_to(character)
-    raise CrystalAlreadyBoundException.new("crystal already bound to a character") if @character
-    raise ArgumentError.new("character should be an instance of `Character`") unless character.is_a?(Character)
+    if @character
+      raise CrystalAlreadyBoundException, 'crystal already bound to a character'
+    end
+
+    unless character.is_a?(Character)
+      raise ArgumentError, 'character should be an instance of `Character`'
+    end
+
     @character = character
   end
 
@@ -63,7 +76,7 @@ class Crystal
   #
   # @return [Character] The character the crystal is bound to.
   def bound_to
-    return @character
+    @character
   end
 
   # Sets the crystal's level.
@@ -74,9 +87,17 @@ class Crystal
   def level=(level)
     return if level == @level
 
-    raise ArgumentError.new("`level` must be an Integer. `#{level.class}` given") unless level.is_a?(Integer)
-    raise ArgumentError.new("`level` must be between 1 and #{MAX_LEVEL}") if level < 1 || level > MAX_LEVEL
-    raise ArgumentError.new("`level` must be greater or equal to #{@level}") if level < @level
+    unless level.is_a?(Integer)
+      raise ArgumentError, "`level` must be an Integer. `#{level.class}` given"
+    end
+
+    if level < 1 || level > MAX_LEVEL
+      raise ArgumentError, "`level` must be between 1 and #{MAX_LEVEL}"
+    end
+
+    if level < @level
+      raise ArgumentError, "`level` must be greater or equal to #{@level}"
+    end
 
     @level = level
     @ap = 0
@@ -88,16 +109,22 @@ class Crystal
     (@level - 1).times { @next_level = (@next_level * 1.5).to_i }
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
+
   # Sets the crystal's current AP.
   #
   # @param ap [Integer] The AP.
   # @raise [ArgumentError] If the given AP is not an integer or is less than 0.
   def ap=(ap)
-    raise ArgumentError.new("`ap` must be an integer. `#{ap.class}` given") unless ap.is_a?(Integer)
-    raise ArgumentError.new("`ap` must be a positive integer") unless ap >= 0
+    unless ap.is_a?(Integer)
+      raise ArgumentError, "`ap` must be an integer. `#{ap.class}` given"
+    end
+
+    raise ArgumentError, '`ap` must be a positive integer' unless ap >= 0
 
     if ap >= @next_level
-      while ap >= @next_level && @level < MAX_LEVEL do
+      while ap >= @next_level && @level < MAX_LEVEL
         ap -= @next_level
         self.level += 1
       end
