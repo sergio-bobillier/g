@@ -2,8 +2,8 @@
 # that is not currently a party member.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
-class CharacterNotInPartyException < Exception
+class CharacterNotInPartyException < RuntimeError
   def initialize(msg = nil)
-    super(msg || "Character not currently in party")
+    super(msg || 'Character not currently in party')
   end
 end

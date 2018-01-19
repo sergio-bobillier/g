@@ -1,4 +1,4 @@
-require_relative "crystal_exception"
+require_relative 'crystal_exception'
 
 # This exception is thrown when an attempt is made to bind a crystal to a
 # character before it has reached the required level.
