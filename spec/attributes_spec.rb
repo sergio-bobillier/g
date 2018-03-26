@@ -6,8 +6,8 @@ RSpec.describe Attributes do
       subject { described_class.new }
 
       it 'initializes all attributes to their minimum' do
-        Attributes::ATTRIBUTES.keys.each do |attribute|
-          expect(subject[attribute]).to eq Attributes::ATTRIBUTES[attribute][:min]
+        Attributes::ATTRIBUTES.keys.each do |attr|
+          expect(subject[attr]).to eq Attributes::ATTRIBUTES[attr][:min]
         end
       end
     end
@@ -25,11 +25,12 @@ RSpec.describe Attributes do
       subject { described_class }
 
       it 'raises an exception' do
-        message = 'Expecting `stats` to be an instance of `Stats` but got String'
-        expect { subject.new("hello") }.to raise_error ArgumentError, message
+        msg = 'Expecting `stats` to be an instance of `Stats` but got String'
+        expect { subject.new('hello') }.to raise_error ArgumentError, msg
 
-        message = 'Expecting `level` to be an Integer but got String'
-        expect { subject.new(Stats.new, "hello") }.to raise_error ArgumentError, message
+        msg = 'Expecting `level` to be an Integer but got String'
+        expect { subject.new(Stats.new, 'hello') }
+          .to raise_error ArgumentError, msg
       end
     end
   end
@@ -38,7 +39,7 @@ RSpec.describe Attributes do
     subject { described_class.new }
 
     it 'raises an error if an unknown attribute is given' do
-      message = "Unrecognized attribute missingno"
+      message = 'Unrecognized attribute missingno'
       expect { subject[:missingno] }.to raise_error ArgumentError, message
     end
   end
@@ -47,22 +48,25 @@ RSpec.describe Attributes do
     subject { described_class.new }
 
     it 'raises an error if an unknown attribute is given' do
-      message = "Unrecognized attribute missingno"
+      message = 'Unrecognized attribute missingno'
       expect { subject[:missingno] = 100 }.to raise_error ArgumentError, message
     end
 
     it 'raises an error if an unsupported type is provied' do
       message = 'Expected Integer but got String instead'
-      expect { subject[:health] = "hello" }.to raise_error ArgumentError, message
+      expect { subject[:health] = 'hello' }
+        .to raise_error ArgumentError, message
     end
 
     context 'when the given value is within bounds' do
       it 'sets the value for the given attribute' do
-        expect { subject[:total_health] = 100 }.to change { subject[:total_health] }.to(100)
+        expect { subject[:total_health] = 100 }
+          .to change { subject[:total_health] }.to(100)
       end
 
       it 'can increment the value for the given attribute' do
-        expect { subject[:total_health] += 100 }.to change { subject[:total_health] }.by(100)
+        expect { subject[:total_health] += 100 }
+          .to change { subject[:total_health] }.by(100)
       end
     end
 
@@ -70,11 +74,13 @@ RSpec.describe Attributes do
       before { subject[:evasion] = 0.6 }
 
       it 'adjusts the value to the lowest bound' do
-        expect { subject[:evasion] = -1.0 }.to change { subject[:evasion] }.to(0.0)
+        expect { subject[:evasion] = -1.0 }
+          .to change { subject[:evasion] }.to(0.0)
       end
 
       it 'adjusts the value to the upper bound' do
-        expect { subject[:evasion] = 2.0 }.to change { subject[:evasion] }.to(1.0)
+        expect { subject[:evasion] = 2.0 }
+          .to change { subject[:evasion] }.to(1.0)
       end
     end
   end
@@ -110,7 +116,7 @@ RSpec.describe Attributes do
       it 'does not reset the transient attributes' do
         expect { subject.calculate_attributes(stats, 2) }
           .to change { subject[:health] }.by(0)
-          .and change { subject[:mana] }.by(0)
+                                         .and change { subject[:mana] }.by(0)
       end
     end
 
@@ -118,7 +124,7 @@ RSpec.describe Attributes do
       it 'resets the transient attributes' do
         expect { subject.calculate_attributes(stats, 2, true) }
           .to change { subject[:health] }.to(373)
-          .and change { subject[:mana] }.to(208)
+                                         .and change { subject[:mana] }.to(208)
       end
     end
 
@@ -152,7 +158,8 @@ RSpec.describe Attributes do
     subject { described_class.new(stats) }
 
     it 'adjusts the transient attributes when their totals change' do
-      expect { subject[:total_health] -= 10 }.to change { subject[:health] }.by(-10)
+      expect { subject[:total_health] -= 10 }
+        .to change { subject[:health] }.by(-10)
       expect { subject[:total_mana] -= 10 }.to change { subject[:mana] }.by(-10)
     end
 
@@ -161,7 +168,7 @@ RSpec.describe Attributes do
 
       expect { subject.calculate_attributes(stats, 1) }
         .to change { subject[:health] }.to(261)
-        .and change { subject[:mana] }.to(179)
+                                       .and change { subject[:mana] }.to(179)
     end
   end
 end
