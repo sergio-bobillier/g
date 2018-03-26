@@ -1,5 +1,6 @@
 task :tests do
   ruby "tests/tests.rb"
+  sh 'rspec'
 end
 
 task :lint do

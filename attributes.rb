@@ -135,7 +135,7 @@ class Attributes
     end
 
     unless level.is_a?(Integer)
-      raise ArgumentError, 'Expecting `level` to be an Integer but got'\
+      raise ArgumentError, 'Expecting `level` to be an Integer but got '\
                            "#{level.class}"
     end
 
