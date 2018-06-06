@@ -116,7 +116,7 @@ RSpec.describe Attributes do
       it 'does not reset the transient attributes' do
         expect { subject.calculate_attributes(stats, 2) }
           .to change { subject[:health] }.by(0)
-                                         .and change { subject[:mana] }.by(0)
+          .and change { subject[:mana] }.by(0)
       end
     end
 
@@ -124,7 +124,7 @@ RSpec.describe Attributes do
       it 'resets the transient attributes' do
         expect { subject.calculate_attributes(stats, 2, true) }
           .to change { subject[:health] }.to(373)
-                                         .and change { subject[:mana] }.to(208)
+          .and change { subject[:mana] }.to(208)
       end
     end
 
@@ -168,7 +168,7 @@ RSpec.describe Attributes do
 
       expect { subject.calculate_attributes(stats, 1) }
         .to change { subject[:health] }.to(261)
-                                       .and change { subject[:mana] }.to(179)
+        .and change { subject[:mana] }.to(179)
     end
   end
 end
