@@ -5,8 +5,6 @@ require_relative 'exceptions/character_not_found_exception'
 require_relative 'exceptions/party_has_dispersed_exception'
 require_relative 'exceptions/party_full_exception'
 
-# rubocop:disable Style/RedundantReturn
-
 # Represents a Characters party.
 #
 # @author Sergio Bobillier <sergio.bobillier@gmail.com>
@@ -55,6 +53,8 @@ class Party
   # Adds a character to the party.
   #
   # @param character [Character] The character
+  # @return [Pary] Returns the receiving object so that multiple character can
+  #   be added.
   # @raise [ArgumentError] If the given object is not a Character.
   # @raise [PartyHasDispersedException] If the party has dispersed.
   # @raise [PartyFullException] If the party is full.
@@ -72,7 +72,7 @@ class Party
 
     character.party = self
     @characters << character
-    return self
+    self
   end
 
   # Removes the given charater from the party.
@@ -90,7 +90,7 @@ class Party
     end
 
     @leader = @characters[0] if removed_character == @leader && @characters.any?
-    return removed_character
+    removed_character
   end
 
   # Removes the given character from the party. If the character is not in the
@@ -103,7 +103,8 @@ class Party
   def remove!(character)
     removed_character = remove(character)
     raise CharacterNotFoundException unless removed_character
-    return removed_character
+
+    removed_character
   end
 
   # @return [Boolean] True if the given character is a member of the party,
@@ -149,14 +150,22 @@ class Party
         raise ArgumentError, 'All array items must be characters'
       end
 
-      raise CharacterAlreadyInPartyException if character.party
+      already_in_party_error if character.party
     end
 
-    # rubocop:disable Style/GuardClause
+    validate_characters_unicity(characters)
+  end
 
-    # Checks that no character is repeated in the array
-    unless characters.length == characters.uniq.length
-      raise CharacterAlreadyInPartyException
-    end
+  # Validates that no characters are repeated in the given character array.
+  #
+  # @param [Array<Character>] The array of Characters
+  # @raise [CharacterAlreadyInPartyException] If any character is repeated in
+  #   the array.
+  def validate_characters_unicity(characters)
+    already_in_party_error unless characters.length == characters.uniq.length
+  end
+
+  def already_in_party_error
+    raise CharacterAlreadyInPartyException
   end
 end
