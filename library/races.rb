@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../race'
 
 # This module contains a constant for each of the five races. Normally these

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'party_exception'
 
 # This exception is raised then an attempt is made to remove a character from a

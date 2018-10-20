@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative('crystal_exception')
 
 # This exception is raised when an attempt is made to bind an already bound

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'attributes'
 require_relative 'exceptions/character_not_in_party_exception'
 require_relative 'exceptions/crystal_already_bound_exception'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'stats'
 
 # This is the base class for the classes that modify the basic stats of

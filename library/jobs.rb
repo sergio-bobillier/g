@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../job'
 
 # This module contains constants with all the available jobs. Usually these

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'elements'
 require_relative 'exceptions/crystal_already_bound_exception'
 

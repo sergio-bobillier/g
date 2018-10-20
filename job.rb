@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'character_modifier'
 
 # This class models a character Job. A Job, sometimes referred to as a Class

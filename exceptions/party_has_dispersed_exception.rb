@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'party_exception'
 
 # This exception is raised when an attempt is made to add a character to a

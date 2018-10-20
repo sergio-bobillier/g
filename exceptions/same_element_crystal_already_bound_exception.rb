@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'crystal_exception'
 
 # This exception is thrown when an attempt is made to bind two crystals with

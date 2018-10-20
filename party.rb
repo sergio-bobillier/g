@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'exceptions/character_already_in_party_exception'
 require_relative 'exceptions/character_not_found_exception'
 require_relative 'exceptions/party_has_dispersed_exception'

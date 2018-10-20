@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This exception is raised when the leave_party method is called on a character
 # that is not currently a party member.
 #

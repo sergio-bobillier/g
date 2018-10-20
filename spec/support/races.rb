@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'Blank Race' do
   let(:blank_race) do
     Race.new(Stats.new(con: 0, str: 0, dex: 0, int: 0, men: 0, wit: 0))

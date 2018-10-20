@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Style/RedundantReturn
 
 # Models the character's basic stats.

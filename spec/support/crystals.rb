@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'Crystals' do
   let(:water_crystal) { Crystal.new(:water) }
   let(:ice_crystal) { Crystal.new(:water) }
