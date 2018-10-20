@@ -113,6 +113,7 @@ class Crystal
 
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Naming/UncommunicativeMethodParamName
 
   # Sets the crystal's current AP.
   #
@@ -136,4 +137,8 @@ class Crystal
       @ap = ap
     end
   end
+
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Naming/UncommunicativeMethodParamName
 end
