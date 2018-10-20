@@ -181,11 +181,13 @@ class Attributes
   def calculate_attributes(stats, level, reset_transient_attributes = false)
     @attributes.keys.each do |attribute|
       next unless ATTRIBUTES[attribute][:formula]
+
       set_attribute(attribute,
                     ATTRIBUTES[attribute][:formula].call(stats, level))
     end
 
     return unless reset_transient_attributes
+
     set_attribute(:health, @attributes[:total_health])
     set_attribute(:mana, @attributes[:total_mana])
   end
@@ -235,16 +237,16 @@ class Attributes
 
     # Adjust transient attributes if their totals decrease.
     return unless [:total_health, :total_mana].include? attribute
+
     update_transient_attribute(attribute)
   end
 
   def update_transient_attribute(attribute)
     transient = attribute.to_s[6..-1].to_sym # Remove "total_"
     return if @attributes[transient] < @attributes[attribute]
+
     @attributes[transient] = @attributes[attribute]
   end
-
-  # rubocop:disable Style/RedundantReturn
 
   # Validates that the given value is within the limits for the attribute.
   #
@@ -265,10 +267,8 @@ class Attributes
       value = max if value > max
     end
 
-    return value
+    value
   end
-
-  # rubocop:disable Metrics/LineLength
 
   # Returns the specified limit value for the attribute.
   #
@@ -276,6 +276,9 @@ class Attributes
   # @param limit [Symbol] The limit value to get, either `:min` or `:max`
   # @return The limit value.
   def limit_value(properties, limit)
-    properties[limit].is_a?(Symbol) ? @attributes[properties[limit]] : properties[limit]
+    attr_limit = properties[limit]
+    attr_limit.is_a?(Symbol) ? @attributes[attr_limit] : attr_limit
   end
 end
+
+# rubocop:enable Metrics/ClassLength
