@@ -73,6 +73,7 @@ class Race < CharacterModifier
   # @raise [ArgumentError] If the element is unknown.
   def validate_element(element)
     return if ELEMENTS.include?(element)
+
     raise ArgumentError, "Unknown element '#{element}'"
   end
 end
