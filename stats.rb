@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/RedundantReturn
-
 # Models the character's basic stats.
 #
 # - con - Constitution: Influences physical defense, resistance to physical
@@ -94,7 +92,7 @@ class Stats
       set_stat(stat, value + stats[stat])
     end
 
-    return self
+    self
   end
 
   # Returns a new instance of Stats whose values are the sum of the receiver
@@ -144,7 +142,7 @@ class Stats
     end
 
     value = MAX_STATS if value > MAX_STATS
-    value = 0 if value < 0
+    value = 0 if value.negative?
 
     old_value = @stats[stat]
     @stats[stat] = value
@@ -152,11 +150,12 @@ class Stats
     unless old_value == value
       @change_listeners.each do |listener|
         next unless listener.respond_to?(:call)
+
         listener.call(stat, @stats[:stat], value)
       end
     end
 
-    return value
+    value
   end
 
   # Creates a new Stats object from the receiver and optionally adds the values
@@ -173,6 +172,6 @@ class Stats
       new_stats[stat] = value + addition
     end
 
-    return new_stats
+    new_stats
   end
 end
