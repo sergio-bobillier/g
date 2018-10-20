@@ -127,7 +127,7 @@ class Character
 
     return if experience.zero?
 
-    if experience > 0
+    if experience.positive?
       add_experience experience
     else
       substract_experience experience
@@ -143,6 +143,7 @@ class Character
   #   circunstances).
   def leave_party
     raise CharacterNotInPartyException unless party
+
     party.remove!(self)
   end
 
@@ -300,3 +301,5 @@ class Character
     end
   end
 end
+
+# rubocop:enable Metrics/ClassLength
