@@ -26,7 +26,7 @@ RSpec.describe Attributes do
     context 'when invalid parameters are given' do
       subject { described_class }
 
-      it 'raises an exception' do
+      it 'raises an error' do
         msg = 'Expecting `stats` to be an instance of `Stats` but got String'
         expect { subject.new('hello') }.to raise_error ArgumentError, msg
 

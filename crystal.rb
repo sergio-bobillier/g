@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'elements'
-require_relative 'exceptions/crystal_already_bound_exception'
+require_relative 'exceptions/crystal_already_bound'
 
 # Represents a Crystal. Crystals are the way characters adquire abilities.
 # The crystals level up as they gain AP and "learn" abilities as they do. The
@@ -58,13 +58,12 @@ class Crystal
   # Binds the crystal to the given character.
   #
   # @param character [Character] The character to bind the crystal to.
-  # @raise [CrystalAlreadyBoundException] If the crystal is already bound to a
-  #   character.
+  # @raise [CrystalAlreadyBound] If the crystal is already bound to a character.
   # @raise [ArgumentError] If the given character is not an instance of
   #   `Character`
   def bind_to(character)
     if @character
-      raise CrystalAlreadyBoundException, 'crystal already bound to a character'
+      raise CrystalAlreadyBound, 'crystal already bound to a character'
     end
 
     unless character.is_a?(Character)

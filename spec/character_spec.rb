@@ -21,11 +21,12 @@ end
 
 RSpec.shared_examples 'Level out of bounds' do |level|
   it 'raises an error' do
-    exception = ArgumentError
+    error = ArgumentError
     message = "`level` must be between 1 and #{described_class::MAX_LEVEL}"
+
     expect do
       described_class.new(blank_race, level)
-    end.to raise_error(exception, message)
+    end.to raise_error(error, message)
   end
 end
 
@@ -74,9 +75,9 @@ RSpec.describe Character do
 
     context 'When an invalid race is given' do
       it 'raises an error' do
-        exception = ArgumentError
+        error = ArgumentError
         message = 'race should be an instance of `Race`'
-        expect { described_class.new('h') }.to raise_error(exception, message)
+        expect { described_class.new('h') }.to raise_error(error, message)
       end
     end
 
@@ -104,11 +105,12 @@ RSpec.describe Character do
 
     context 'when the given level is not an integer' do
       it 'raises an error' do
-        exception = ArgumentError
+        error = ArgumentError
         message = '`level` must be an Integer'
+
         expect do
           described_class.new(blank_race, 'h')
-        end.to raise_error(exception, message)
+        end.to raise_error(error, message)
       end
     end
 
@@ -168,10 +170,11 @@ RSpec.describe Character do
     include_context 'Default character'
 
     context 'when the character is not a member of a party' do
-      it 'raises an exception' do
-        exception = CharacterNotInPartyException
+      it 'raises an error' do
+        error = CharacterNotInParty
         message = 'Character not currently in party'
-        expect { subject.leave_party }.to raise_error(exception, message)
+
+        expect { subject.leave_party }.to raise_error(error, message)
       end
     end
 
@@ -183,10 +186,11 @@ RSpec.describe Character do
         subject.party = party
       end
 
-      it 'raises an exception' do
-        exception = CharacterNotFoundException
+      it 'raises an error' do
+        error = CharacterNotFound
         message = 'Character not in party'
-        expect { subject.leave_party }.to raise_error(exception, message)
+
+        expect { subject.leave_party }.to raise_error(error, message)
       end
     end
 
@@ -225,7 +229,7 @@ RSpec.describe Character do
     include_context 'Default character'
 
     context 'when the parameter is not an integer' do
-      it 'raises an exception' do
+      it 'raises an error' do
         message = '`experience` should be an integer'
 
         expect do
@@ -435,7 +439,7 @@ RSpec.describe Character do
     subject { described_class.new(blank_race) }
 
     context 'when something besides a job is given as argument' do
-      it 'raises an exception' do
+      it 'raises an error' do
         expect { subject.job = 'hello' }.to raise_error ArgumentError
       end
     end
@@ -517,7 +521,7 @@ RSpec.describe Character do
       context 'when an attempt is made to bind another crystal' do
         it 'raises an error' do
           expect { subject.bind_crystal(fire_crystal) }
-            .to raise_error(LevelTooLowForCrystalBindingException)
+            .to raise_error(LevelTooLowForCrystalBinding)
         end
       end
     end
@@ -529,16 +533,16 @@ RSpec.describe Character do
 
       context 'when an attempt is made to' do
         context 'bind the same crystal' do
-          it 'raises an exception' do
+          it 'raises an error' do
             expect { subject.bind_crystal(water_crystal) }
-              .to raise_error(CrystalAlreadyBoundException)
+              .to raise_error(CrystalAlreadyBound)
           end
         end
 
         context 'bind a crystal with the same element' do
-          it 'raises an exception' do
+          it 'raises an error' do
             expect { subject.bind_crystal(ice_crystal) }
-              .to raise_error(SameElementCrystalAlreadyBoundException)
+              .to raise_error(SameElementCrystalAlreadyBound)
           end
         end
 
@@ -548,16 +552,16 @@ RSpec.describe Character do
             subject.bind_crystal(earth_crystal)
           end
 
-          it 'raises an exception' do
+          it 'raises an error' do
             expect { subject.bind_crystal(wind_crystal) }
-              .to raise_error(CrystalLimitReachedException)
+              .to raise_error(CrystalLimitReached)
           end
         end
 
         context 'bind the same crystal to another character' do
-          it 'raises an exception' do
+          it 'raises an error' do
             expect { another_character.bind_crystal(water_crystal) }
-              .to raise_error(CrystalAlreadyBoundException)
+              .to raise_error(CrystalAlreadyBound)
           end
         end
       end

@@ -5,14 +5,14 @@ require_relative '../character_modifier'
 RSpec.describe CharacterModifier do
   describe '#initialize' do
     context 'when no `stats` object is given' do
-      it 'raises an exception' do
+      it 'raises an error' do
         message = 'wrong number of arguments (given 0, expected 1)'
         expect { described_class.new }.to raise_error ArgumentError, message
       end
     end
 
     context 'when something besides an `Stats` object is given' do
-      it 'raises an exception' do
+      it 'raises an error' do
         message = '`stats` should be an instance of Stats'
         expect { described_class.new('Hello') }.to raise_error ArgumentError,
                                                                message

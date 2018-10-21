@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require_relative 'attributes'
-require_relative 'exceptions/character_not_in_party_exception'
-require_relative 'exceptions/crystal_already_bound_exception'
-require_relative 'exceptions/crystal_limit_reached_exception'
-require_relative 'exceptions/level_too_low_for_crystal_binding_exception'
-require_relative 'exceptions/same_element_crystal_already_bound_exception'
+require_relative 'exceptions/character_not_in_party'
+require_relative 'exceptions/crystal_already_bound'
+require_relative 'exceptions/crystal_limit_reached'
+require_relative 'exceptions/level_too_low_for_crystal_binding'
+require_relative 'exceptions/same_element_crystal_already_bound'
 require_relative 'crystal'
 require_relative 'job'
 require_relative 'race'
@@ -136,13 +136,12 @@ class Character
 
   # Leaves the current party.
   #
-  # @raise [CharacterNotInPartyException] If the character is not a party
-  #   member.
-  # @raise [CharacterNotFoundException] If the character tries to leave a party
-  #   from which it is not a member. (Should never be raised under normal
+  # @raise [CharacterNotInParty] If the character is not a party member.
+  # @raise [CharacterNotFound] If the character tries to leave a party from
+  #   which it is not a member. (Should never be raised under normal
   #   circunstances).
   def leave_party
-    raise CharacterNotInPartyException unless party
+    raise CharacterNotInParty unless party
 
     party.remove!(self)
   end
@@ -173,15 +172,15 @@ class Character
   #
   # @param crystal [Crystal] The crystal to bind.
   # @raise [ArgumentError] If the given value is not an instance of `Crystal`.
-  # @raise [CrystalLimitReachedException] If the crystal limit has been reached.
-  # @raise [LevelTooLowForCrystalBindingException] If the character's level is
-  #   not high enough to bind another crystal.
-  # @raise [CrystalAlreadyBoundException] If an attempt is made to bind the same
-  #   crystal twice.
-  # @raise [CrystalAlreadyBoundException] If the crystal has already been bound
-  #   to a character.
-  # @raise [SameElementCrystalAlreadyBoundException] If the character has a
-  #   bound Crystal of the same element.
+  # @raise [CrystalLimitReached] If the crystal limit has been reached.
+  # @raise [LevelTooLowForCrystalBinding] If the character's level is not high
+  #   enough to bind another crystal.
+  # @raise [CrystalAlreadyBound] If an attempt is made to bind the same crystal
+  #   twice.
+  # @raise [CrystalAlreadyBound] If the crystal has already been bound to a
+  #   character.
+  # @raise [SameElementCrystalAlreadyBound] If the character has a bound Crystal
+  #   of the same element.
   def bind_crystal(crystal)
     validate_crystal_binding(crystal)
 
@@ -193,7 +192,7 @@ class Character
     # (50 / 3) = 32 and so on. Note that, if MAX_LEVEL or MAX_CRYSTALS change
     # these values will change too.
     min_level = @crystals.length * (MAX_LEVEL / MAX_CRYSTALS)
-    raise LevelTooLowForCrystalBindingException if level < min_level
+    raise LevelTooLowForCrystalBinding if level < min_level
 
     validate_crystal_element(crystal)
     crystal.bind_to(self)
@@ -205,30 +204,29 @@ class Character
   # Validates that the crystal binding that is about to be performed is valid.
   #
   # @raise [ArgumentError] If the given value is not an instance of `Crystal`.
-  # @raise [CrystalLimitReachedException] If the crystal limit has been reached.
-  # @raise [LevelTooLowForCrystalBindingException] If the character's level is
-  #   not high enough to bind another crystal.
-  # @raise [CrystalAlreadyBoundException] If an attempt is made to bind the same
-  #   crystal twice.
-  # @raise [CrystalAlreadyBoundException] If the crystal has already been bound
-  #   to a character.
+  # @raise [CrystalLimitReached] If the crystal limit has been reached.
+  # @raise [LevelTooLowForCrystalBinding] If the character's level is not high
+  #   enough to bind another crystal.
+  # @raise [CrystalAlreadyBound] If an attempt is made to bind the same crystal
+  #   twice.
+  # @raise [CrystalAlreadyBound] If the crystal has already been boundto a
+  #   character.
   def validate_crystal_binding(crystal)
     raise ArgumentError unless crystal.is_a?(Crystal)
-    raise CrystalLimitReachedException if @crystals.length >= MAX_CRYSTALS
-    raise CrystalAlreadyBoundException if @crystals.include?(crystal)
-    raise CrystalAlreadyBoundException if crystal.bound_to
+    raise CrystalLimitReached if @crystals.length >= MAX_CRYSTALS
+    raise CrystalAlreadyBound if @crystals.include?(crystal) || crystal.bound_to
   end
 
   # Validates that the character doesn't have a Crystal with the same element
   # already bound.
   #
   # @param crystal [Crystal] The crystal.
-  # @raise [SameElementCrystalAlreadyBoundException] If the character has a
-  #   bound Crystal of the same element.
+  # @raise [SameElementCrystalAlreadyBound] If the character has a bound Crystal
+  #   of the same element.
   def validate_crystal_element(crystal)
     @crystals.each do |bound_crystal|
       if bound_crystal.element == crystal.element
-        raise SameElementCrystalAlreadyBoundException
+        raise SameElementCrystalAlreadyBound
       end
     end
   end

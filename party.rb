@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'exceptions/character_already_in_party_exception'
-require_relative 'exceptions/character_not_found_exception'
-require_relative 'exceptions/party_has_dispersed_exception'
-require_relative 'exceptions/party_full_exception'
+require_relative 'exceptions/character_already_in_party'
+require_relative 'exceptions/character_not_found'
+require_relative 'exceptions/party_has_dispersed'
+require_relative 'exceptions/party_full'
 
 # Represents a Characters party.
 #
@@ -56,19 +56,18 @@ class Party
   # @return [Pary] Returns the receiving object so that multiple character can
   #   be added.
   # @raise [ArgumentError] If the given object is not a Character.
-  # @raise [PartyHasDispersedException] If the party has dispersed.
-  # @raise [PartyFullException] If the party is full.
-  # @raise [CharacterAlreadyInPartyException] If the character is already in a
-  #   party.
+  # @raise [PartyHasDispersed] If the party has dispersed.
+  # @raise [PartyFull] If the party is full.
+  # @raise [CharacterAlreadyInParty] If the character is already in a party.
   def <<(character)
-    raise PartyHasDispersedException if @dispersed
+    raise PartyHasDispersed if @dispersed
 
     unless character.is_a?(Character)
       raise ArgumentError, 'Only characters can be added to a party'
     end
 
-    raise PartyFullException unless @characters.length < MAX_SIZE
-    raise CharacterAlreadyInPartyException if character.party
+    raise PartyFull unless @characters.length < MAX_SIZE
+    raise CharacterAlreadyInParty if character.party
 
     character.party = self
     @characters << character
@@ -93,16 +92,14 @@ class Party
     removed_character
   end
 
-  # Removes the given character from the party. If the character is not in the
-  # party the function will raise a CharacterNotFoundException.
+  # Removes the given character from the party..
   #
   # @param character [Character] The character to be removed.
   # @return [Character] The removed character
-  # @raise [CharacterNotFoundException] If the character is not a member of the
-  #   party.
+  # @raise [CharacterNotFound] If the character is not a member of the party.
   def remove!(character)
     removed_character = remove(character)
-    raise CharacterNotFoundException unless removed_character
+    raise CharacterNotFound unless removed_character
 
     removed_character
   end
@@ -122,7 +119,7 @@ class Party
     end
 
     unless @characters.include?(character)
-      raise CharacterNotFoundException, 'The character is not a party member'
+      raise CharacterNotFound, 'The character is not a party member'
     end
 
     @leader = character
@@ -142,8 +139,8 @@ class Party
   # @param [Array<Character>] The array of characters.
   # @raise [ArgumentError] If anything else but Characters is found in the
   #   array.
-  # @raise [CharacterAlreadyInPartyException] If any of the characters is
-  #   already in party or if there are duplicated elements in the array.
+  # @raise [CharacterAlreadyInParty] If any of the characters is already in
+  #   party or if there are duplicated elements in the array.
   def validate_characters(characters)
     characters.each do |character|
       unless character.is_a?(Character)
@@ -159,13 +156,12 @@ class Party
   # Validates that no characters are repeated in the given character array.
   #
   # @param [Array<Character>] The array of Characters
-  # @raise [CharacterAlreadyInPartyException] If any character is repeated in
-  #   the array.
+  # @raise [CharacterAlreadyInParty] If any character is repeated in the array.
   def validate_characters_unicity(characters)
     already_in_party_error unless characters.length == characters.uniq.length
   end
 
   def already_in_party_error
-    raise CharacterAlreadyInPartyException
+    raise CharacterAlreadyInParty
   end
 end

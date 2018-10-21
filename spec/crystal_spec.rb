@@ -272,7 +272,7 @@ RSpec.describe Crystal do
         message = 'crystal already bound to a character'
 
         expect { subject.bind_to(character) }
-          .to raise_error CrystalAlreadyBoundException, message
+          .to raise_error CrystalAlreadyBound, message
       end
     end
   end

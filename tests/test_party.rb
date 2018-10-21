@@ -10,7 +10,7 @@ class TestParty < Minitest::Test
   # A race with no particular attributes (needed for character creation).
   BLANK_RACE = Race.new(Stats.new({:con => 0, :str => 0, :dex => 0, :int => 0, :men => 0, :wit => 0}))
 
-  # Tests that the class constructor raises an exception when invalid objects
+  # Tests that the class constructor raises an error when invalid objects
   # are used to build it.
   def test_exception_raised_when_invalid_object
     assert_raises ArgumentError do
@@ -43,7 +43,7 @@ class TestParty < Minitest::Test
     character = Character.new(BLANK_RACE)
     Party.new([character, Character.new(BLANK_RACE)])
 
-    assert_raises CharacterAlreadyInPartyException do
+    assert_raises CharacterAlreadyInParty do
       Party.new([Character.new(BLANK_RACE), character, Character.new(BLANK_RACE)])
     end
   end
@@ -53,7 +53,7 @@ class TestParty < Minitest::Test
   def test_exception_if_repeated_character
     character = Character.new(BLANK_RACE)
 
-    assert_raises CharacterAlreadyInPartyException do
+    assert_raises CharacterAlreadyInParty do
       Party.new([Character.new(BLANK_RACE), character, character, Character.new(BLANK_RACE)])
     end
   end
@@ -99,7 +99,7 @@ class TestParty < Minitest::Test
     (Party::MAX_SIZE).times { characters << Character.new(BLANK_RACE) }
     party = Party.new(characters)
 
-    assert_raises PartyFullException do
+    assert_raises PartyFull do
       party << Character.new(BLANK_RACE)
     end
   end
@@ -111,7 +111,7 @@ class TestParty < Minitest::Test
     Party.new([character, Character.new(BLANK_RACE)])
     party2 = Party.new([Character.new(BLANK_RACE), Character.new(BLANK_RACE)])
 
-    assert_raises CharacterAlreadyInPartyException do
+    assert_raises CharacterAlreadyInParty do
       party2 << character
     end
   end
@@ -159,7 +159,7 @@ class TestParty < Minitest::Test
 
     party.remove(character)
 
-    assert_raises CharacterNotFoundException do
+    assert_raises CharacterNotFound do
       party.remove!(character)
     end
   end
@@ -191,7 +191,7 @@ class TestParty < Minitest::Test
     character2 = Character.new(BLANK_RACE)
     party = Party.new([character1, character2])
 
-    assert_raises CharacterNotFoundException do
+    assert_raises CharacterNotFound do
       party.leader = Character.new(BLANK_RACE)      # Not a member of the party.
     end
 
@@ -249,7 +249,7 @@ class TestParty < Minitest::Test
     party = Party.new([character1, character2])
     party.remove(character1)
 
-    assert_raises PartyHasDispersedException do
+    assert_raises PartyHasDispersed do
       party << character1
     end
   end
